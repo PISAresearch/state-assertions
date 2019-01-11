@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1;
+pragma solidity ^0.5.0;
 
 contract App {
     
@@ -100,7 +100,7 @@ contract StateAssertionChannels {
         // Store new state!
         bestRound = _i;
         hstate = _hstate;
-        firstturn = _partyturn; 
+        firstturn = _firstturn; 
         
         // Refund everyone
         refundAllBonds(); 
@@ -144,7 +144,7 @@ contract StateAssertionChannels {
         
         // Make sure dispute process is not already active
         require( status == Status.ON );
-        require( firstturn == msg.sender ) 
+        require( firstturn == msg.sender );
         status = Status.DISPUTE;
         
         // Dummy assertion - overwritten in AssertState
