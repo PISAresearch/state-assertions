@@ -1,31 +1,22 @@
 pragma solidity ^0.5.0;
 
 contract App {
-    
     // Returns new state hash, coins for player1 to withdraw and coins for player2 to withdraw. 
     function transition(address payable signer, bytes memory oldstate, bytes memory input, uint command) public pure returns (bytes32 newhstate); 
-
 }
 
-contract StateAssertionChannels {
-    
+contract StateAssertionChannel {
     address payable[] public plist; // list of parties in our channel 
-    mapping (address => bool) pmap; // List of players in this channel!
-    mapping (address => uint) bonds; // List of bonds to be refunded
-    mapping (address => uint) balance; // List of bonds to be refunded
-    
-    struct Assertion {
-        address sender;
-        bytes32 prevhstate;
-        bytes32 newhstate;
-        bytes input; 
-        uint cmd;
-    }
+    mapping (address => uint) public bonds; // List of bonds to be refunded
+    mapping (address => uint) public balance; // List of bonds to be refunded
 
-    uint deadline; 
-    
-    Assertion public assertion;
-    address public firstturn; 
+    uint deadline;
+    address asserter;
+    bytes32 futurehstate;
+    bytes32 inputHash;
+    uint256 command;
+    bool assertion;
+    address public turn; 
 
     enum Status {DEPOSIT, ON, DISPUTE, PAYOUT} 
     
@@ -47,7 +38,7 @@ contract StateAssertionChannels {
     event EventEvidence (uint256 indexed bestround, bytes32 hstate);
     event EventClose (uint256 indexed bestround, bytes32 hstate);
 
-    modifier onlyplayers { if (pmap[msg.sender]) _; else revert(); }
+    modifier onlyplayers { if (plist[0] == msg.sender || plist[1] == msg.sender) _; else revert(); }
      
     // The application creates this state channel and updates it with the list of players.
     // Also sets a fixed dispute period.
@@ -55,12 +46,9 @@ contract StateAssertionChannels {
     // --> This can be tweaked so the state channel holds the coins, and app tracks the balance, 
     // --> channel must instantatiate app - too much work for demo. 
     constructor(address payable party1, address payable party2, uint _disputePeriod, address _app, uint _bond) public {
-
         plist.push(party1);
         plist.push(party2);
-        pmap[party1] = true;
-        pmap[party2] = true; 
-        
+
         status = Status.DEPOSIT;
 
         disputePeriod = _disputePeriod;
@@ -70,19 +58,27 @@ contract StateAssertionChannels {
 
     // Both parties need to deposit coins. 
     // Equal value turns on channel. 
-    function depost() public payable onlyplayers {
+    function deposit() public payable onlyplayers {
         balance[msg.sender] = balance[msg.sender] + msg.value;
         if(balance[plist[0]] == balance[plist[1]]) {
             status = Status.ON; 
         }
     }
+
+    function clearAssertionState() internal {
+        asserter = address(0x00);
+        futurehstate = 0x00;
+        inputHash = 0x00;
+        command = 0;
+        assertion = false;
+    }
     
     // Set latest agreed state off-chain (can cancel commands in process)
-    function setstate(uint256[] memory _sigs, uint256 _i, address _firstturn, bytes32 _hstate) public {
+    function setstate(uint256[] memory _sigs, uint256 _i, address _turn, bytes32 _hstate) public {
         require(_i > bestRound);
 
         // Commitment to signed message for new state hash.
-        bytes32 h = keccak256(abi.encodePacked(_hstate, _i, _firstturn, address(this)));
+        bytes32 h = keccak256(abi.encodePacked(_hstate, _i, _turn, address(this)));
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         h = keccak256(abi.encodePacked(prefix, h));
 
@@ -100,116 +96,120 @@ contract StateAssertionChannels {
         // Store new state!
         bestRound = _i;
         hstate = _hstate;
-        firstturn = _firstturn; 
-        
+        turn = _turn;
+
+        // clear the assertion states
+        clearAssertionState();
+
         // Refund everyone
         refundAllBonds(); 
 
         // Tell the world about the new state!
         emit EventEvidence(bestRound, hstate);
     }
-    
-    // Party in the channel can assert a new state. 
-    function assertState(bytes32 _prevhstate, bytes32 _newhstate, bytes memory _input,  uint _command) onlyplayers payable public {
-        require(status == Status.DISPUTE);
-        require(assertion.prevhstate == _prevhstate); 
-        require(assertion.sender != msg.sender); // Cannot assert two states in a row. 
-        
-        // We can confirm we always have the bond from sender. 
-        // We'll refund all bonds after dispute is resolved. 
-        bonds[msg.sender] = bonds[msg.sender] + msg.value; 
-        require(bonds[msg.sender] == bond); 
-               
-        // Store command from sender!  
-        assertion = Assertion(msg.sender, hstate, _newhstate, _input, _command);
-                
-        // New deadline 
-        deadline = block.number + disputePeriod;
-        emit EventAssert(msg.sender, _prevhstate, _newhstate, _command, _input);
-    }
- 
-     // Trigger the dispute
-    // Missing _prevhstate as we'll use the one already in the contract
-    function triggerdispute() onlyplayers payable public {
-        
-        // Make sure dispute process is not already active
-        require( status == Status.ON );
-        status = Status.DISPUTE;
-        deadline = block.number + disputePeriod; 
-    }
-    
+
     // Trigger the dispute
     // Missing _prevhstate as we'll use the one already in the contract
-    function triggerdispute(bytes memory _input, bytes32 _newhstate, uint _command) onlyplayers payable public {
-        
+    function triggerdispute() onlyplayers payable public {
         // Make sure dispute process is not already active
         require( status == Status.ON );
-        require( firstturn == msg.sender );
         status = Status.DISPUTE;
-        
         // Dummy assertion - overwritten in AssertState
-        assertion = Assertion(address(this), 0,0,_input,0);
 
-        // Throws if state cannot be asserted. 
-        assertState(hstate, _newhstate, _input, _command);
+        // address payable otherParty;
+        // if(turn == plist[0]) otherParty = plist[1];
+        // else otherParty = plist[0];
+        // TODO: do we still need to do this
+        //assertion = Assertion(otherParty, 0,hstate,"",0);
+
+        deadline = block.number + disputePeriod; 
     }
 
+
+    // change the next turn
+    function changeTurn() internal {
+        if(plist[0] == turn) turn = plist[1];
+        else if(plist[1] == turn) turn = plist[0];
+    }
+    
+    // Party in the channel can assert a new state. 
+    function assertState(bytes32 _hstate, bytes32 _assertedState, bytes memory _input,  uint _command) onlyplayers payable public {
+        require(status == Status.DISPUTE);
+        require(turn == msg.sender); 
+        changeTurn(); // Cannot assert two states in a row. 
+        if(!assertion) {
+            assertion = true;
+            require(hstate == _hstate);
+        } else {
+            require(futurehstate == _hstate);
+        }
+
+        // We can confirm we always have the bond from sender. 
+        // We'll refund all bonds after dispute is resolved. 
+        require((msg.value == bond && bonds[msg.sender] == 0)
+            || (msg.value == 0 && bonds[msg.sender] == bond));        
+        if(msg.value != 0) bonds[msg.sender] = bonds[msg.sender] + msg.value;
+
+        // update assertion data
+        asserter = msg.sender;
+        inputHash = keccak256(_input);
+        command = _command;
+        hstate = _hstate;
+        futurehstate = _assertedState;
+
+        // New deadline 
+        deadline = block.number + disputePeriod;
+        
+        emit EventAssert(asserter, hstate, futurehstate, command, _input);
+    }
+
+    // TODO: hstate is not set correctly in assertstate
+    // TODO: update turn taker in assertstate
+    // TODO: asserter != msg.sender (should checkCallerTurn()) 
+    // TODO: checkh in challengeAssertion
+
+     
     // Send old state, and the index for submitted command. 
     // This is not PISA friendly. Ideally PISA will have a signed message from the honest party with PISA's address in it.
     // i.e. to stop front-running attacks. 
     // Can easily be fixed (note: this means no more state privacy for PISA)
-    function challengeCommand(bytes memory _oldstate) onlyplayers public {
+    function challengeCommand(bytes memory _oldstate, bytes memory _input) onlyplayers public {
         require(status == Status.DISPUTE);
         // Asserter cannot challenge their own command
-        require(assertion.sender != msg.sender); 
-        
+        require(turn == msg.sender); 
+        require(assertion);
         // hstate is either accepted by all parties, or it was 
         // extended as "correct" by the asserter 
-        require(assertion.prevhstate == keccak256(abi.encodePacked(_oldstate))); 
-        
+        require(hstate == keccak256(abi.encodePacked(_oldstate))); 
+        require(inputHash == keccak256(_input));
+
         // Fetch us new state 
         // Note: we assume the input includes a digital signature 
         // from the party executing this command 
         bytes32 newhstate;
 
-        (newhstate) = app.transition(msg.sender, _oldstate, assertion.input, assertion.cmd);
+        (newhstate) = app.transition(msg.sender, _oldstate, _input, command);
         
         // Is this really the new state?
         // Can the user really withdraw this amount? 
-        if(newhstate != assertion.newhstate) {
-            
-            // Refund challenger
-            status = Status.PAYOUT; 
-            
+        if(newhstate != futurehstate) {
+            // send all funds (including bonds) in the contract to other player
+            msg.sender.transfer(address(this).balance);
         }
     }
-    
-    // Sends honest party all coins + bond, if counterparty is caught cheating.
-    function payout() internal {
-                    
-        address payable notcheater;
-            
-        // Get honest party's address. 
-        if(assertion.sender == plist[0]) { 
-            notcheater = plist[1]; 
-        } else if(assertion.sender == plist[1]) { 
-            notcheater = plist[0]; 
-        }
-        
-        // Send all coins (including bonds) back to non-cheater.  
-        notcheater.transfer(address(this).balance);
-    
-    }
-    
+
     // The app has reached the terminal state. Its state should just be a balance. 
     function resolve(uint balance1, uint balance2) onlyplayers public {
         
         // If the final state was reached via dispute process,
         // Make sure the counterparty accepts it (i.e. the one who didnt do an assertion)
-        if(status == Status.DISPUTE) {
+        if(assertion) {
             // Must be accepted by the counterparty 
-            require(msg.sender != assertion.sender); 
-        } else {
+            require(turn == msg.sender); 
+            // finalise the hstate to be the asserted one
+            hstate = futurehstate;
+        }
+        else {
             require(status == Status.ON); 
         }
         
@@ -218,21 +218,25 @@ contract StateAssertionChannels {
         
         // There was no response from a party
         // i.e. both parties need to use "setstate" or finish protocol via state assertions. 
-        status = Status.PAYOUT; 
-        payout();
+        plist[0].transfer(balance1);
+        plist[1].transfer(balance2);
+        refundAllBonds();
 
         emit EventTimeout(bestRound);
     }
-    
-    
+
     function timeout() onlyplayers public {
         require(block.number >= deadline); 
         require(status == Status.DISPUTE);
         
         // There was no response from a party
         // i.e. both parties need to use "setstate" or finish protocol via state assertions. 
-        status = Status.PAYOUT; 
-        payout();
+        // if we timeout penalise whoever's turn it is by sending everything 
+        // in the contract to the other player
+        address payable otherPlayer;
+        if(plist[0] == turn) otherPlayer = plist[1];
+        else if(plist[1] == turn) otherPlayer = plist[0];
+        otherPlayer.transfer(address(this).balance);
 
         emit EventTimeout(bestRound);
     }
@@ -248,7 +252,7 @@ contract StateAssertionChannels {
             bonds[plist[k]] = 0;
             
             // Send it! 
-            plist[k].transfer(toSend); //throws if bad 
+            if(toSend != 0) plist[k].transfer(toSend); //throws if bad 
         }
     
         // Delete last stored command

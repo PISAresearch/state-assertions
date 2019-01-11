@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "console.table": "^0.10.0",
     "truffle": "^5.0.1"
   }
 }
