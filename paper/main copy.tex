@@ -1,0 +1,523 @@
+\PassOptionsToPackage{usenames}{xcolor}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\documentclass{llncs}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs} % For formal tables
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\usepackage{color}
+\usepackage{boxedminipage}
+\usepackage[ff,sets,keys,primitives,operators]{cryptocode}
+\usepackage{framed}
+\usepackage[group-separator={,}]{siunitx}
+\newcommand\bmmax{2}
+\usepackage{bm}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{footnote}
+\usepackage{units}
+\usepackage{multicol,lipsum}
+\colorlet{iomsg}{MidnightBlue}
+\colorlet{party}{brown}
+\colorlet{entry}{NavyBlue}
+\colorlet{string}{BlueViolet}
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\newcommand{\instantiated}{\mathsf{instantiated}}
+\newcommand{\instantiatedno}{\mathsf{NO}}
+\newcommand{\instantiatedyes}{\mathsf{YES}}
+
+\newcommand{\gamestatus}{\mathsf{phase}}
+\newcommand{\gameregister}{\mathsf{INIT}}
+\newcommand{\gamesetup}{\mathsf{SETUP}}
+\newcommand{\gameattack}{\mathsf{ATTACK}}
+\newcommand{\gamereveal}{\mathsf{REVEAL}}
+\newcommand{\gamewinner}{\mathsf{WIN}}
+\newcommand{\gamefraud}{\mathsf{FRAUD}}
+\newcommand{\gamefinished}{\mathsf{GAMEOVER}}
+
+\newcommand{\chanstatus}{\mathsf{status}}
+
+\newcommand{\chanon}{\mathsf{ON}}
+\newcommand{\chandispute}{\mathsf{DISPUTE}}
+\newcommand{\chanoff}{\mathsf{OFF}}
+
+\newcommand{\hready}{\mathsf{hready}}
+\newcommand{\hboard}{\mathsf{hboard}}
+\newcommand{\hcell}{\mathsf{hcell}}
+\newcommand{\hship}{\mathsf{hship}}
+\newcommand{\hshiplocation}{\mathsf{hshiplocation}}
+
+%\newcommand{\hash}{\textsf{H}}
+\newcommand{\cmd}{\mathsf{cmd}}
+\newcommand{\inputs}{\mathsf{inputs}}
+\newcommand{\hstate}{\mathsf{hstate}}
+\newcommand{\hstatei}{\mathsf{hstate}_{\monotoniccounter}}
+\newcommand{\hstateplus}{\ensuremath{\mathsf{hstate}_{\monotoniccounter+1}}}
+\newcommand{\hstateminus}{\ensuremath{\mathsf{hstate}_{\monotoniccounter-1}}}
+\newcommand{\monotoniccounter}{\mathsf{i}}
+\newcommand{\stateinfo}{\mathsf{state}}
+\newcommand{\stateinfoi}{\mathsf{state}_{\mathsf{i}}}
+\newcommand{\stateinfominus}{\mathsf{state}_{\mathsf{i-1}}}
+\newcommand{\stateinfoplus}{\mathsf{state}_{\mathsf{i+1}}}
+\newcommand{\participant}{\mathcal{P}}
+
+\newcommand{\rani}{\mathsf{r}_{\mathsf{i}}}
+\newcommand{\ran}{\mathsf{r}}
+\newcommand{\ranminus}{\mathsf{r}_{\mathsf{i-1}}}
+\newcommand{\ranplus}{\mathsf{r}_{\mathsf{i+1}}}
+
+\newcommand{\statechannel}{\mathsf{SC}}
+\newcommand{\statechanneldispute}{\mathsf{SC}.\mathsf{trigger}}
+\newcommand{\statechannelsetstate}{\mathsf{SC}.\mathsf{setstatehash}}
+\newcommand{\statechannelresolve}{\mathsf{SC}.\mathsf{resolve}} 
+\newcommand{\statechannelgetcommitment}{\mathsf{SC}.\mathsf{getstatehash}} 
+\newcommand{\statechannelgetdispute}{\mathsf{SC}.\mathsf{getdispute}} 
+\newcommand{\statechannelclose}{\mathsf{SC}.\mathsf{close}} 
+
+\newcommand{\sign}{\mathsf{Sign}}
+\newcommand{\verifysig}{\mathsf{VerifySig}}
+
+\newcommand{\battleship}{\mathsf{BS}}
+\newcommand{\battleshipfraud}{\mathsf{BS.fraud}}
+\newcommand{\battleshipattackcell}{\mathsf{BS.attackcell}}
+\newcommand{\battleshipbegin}{\mathsf{BS.begingame}}
+\newcommand{\battleshipquit}{\mathsf{BS.quitgame}}
+\newcommand{\battleshipcommit}{\mathsf{BS.commit}}
+\newcommand{\battleshipplacebet}{\mathsf{BS.placebet}}
+\newcommand{\battleshipselectboard}{\mathsf{BS.select}}
+\newcommand{\battleshiprevealcell}{\mathsf{BS.opencell}}
+\newcommand{\battleshipsinking}{\mathsf{BS.sunk}}
+\newcommand{\battleshiprevealships}{\mathsf{BS.openships}}
+\newcommand{\battleshiprevealboard}{\mathsf{BS.openships}}
+\newcommand{\battleshipgameover}{\mathsf{BS.gameover}}
+\newcommand{\battleshipdeposit}{\mathsf{BS.deposit}}
+\newcommand{\battleshipwithdraw}{\mathsf{BS.withdraw}}
+\newcommand{\battleshipfinish}{\mathsf{BS.finish}}
+
+%\newcommand{\battleshipshipnotplaced}{\mathsf{BS.fraudnothit}}
+\newcommand{\battleshipdeclarednotsunk}{\mathsf{BS.declarednotsunk}}
+\newcommand{\battleshipdeclarednothit}{\mathsf{BS.declarednothit}}
+\newcommand{\battleshipsamecell}{\mathsf{BS.attacksamecell}}
+\newcommand{\battleshiptwoships}{\mathsf{BS.celltwoships}}
+\newcommand{\battleshipchallengeexpired}{\mathsf{BS.expiredchallenge}}
+
+\newcommand{\battleshiplock}{\mathsf{BS.lock}}
+\newcommand{\battleshipunlock}{\mathsf{BS.unlock}}
+\newcommand{\battleshipgetstate}{\mathsf{BS.getstate}}
+
+\newcommand{\appcontract}{\mathsf{AC}}
+\newcommand{\applock}{\mathsf{AC.lock}}
+\newcommand{\appunlock}{\mathsf{AC.unlock}}
+
+\newcommand{\timerchallenge}{\mathsf{\Delta}_{\mathsf{challenge}}}
+\newcommand{\timechallenge}{\mathsf{t}_{\mathsf{challenge}}}
+\newcommand{\timerextra}{\mathsf{\Delta}_{\mathsf{extra}}}
+\newcommand{\timerdispute}{\mathsf{\Delta}_{\mathsf{dispute}}}
+\newcommand{\timenow}{\mathsf{t}_{\mathsf{now}}}
+\newcommand{\timestart}{\mathsf{t}_{\mathsf{start}}}
+\newcommand{\timeend}{\mathsf{t}_{\mathsf{end}}}
+\newcommand{\timedispute}{\timenow + \mathsf{\Delta}_{\mathsf{dispute}}}
+
+\newcommand{\appblue}{\textcolor{entry}{\bf AC}}
+\newcommand{\chanblue}{\textcolor{entry}{\bf SC}}
+\newcommand{\depositblue}{\textcolor{entry}{\bf deposit}}
+\newcommand{\timeoutblue}{\textcolor{entry}{\bf timeout}}
+\newcommand{\transitionblue}{\textcolor{entry}{\bf transition}}
+\newcommand{\resolveblue}{\textcolor{entry}{\bf resolve}}
+\newcommand{\setstateblue}{\textcolor{entry}{\bf setstate}}
+\newcommand{\chanchallenge}{\textcolor{entry}{\bf challenge}}
+\newcommand{\triggerdispute}{\textcolor{entry}{\bf triggerDispute}}
+\newcommand{\assertstate}{\textcolor{entry}{\bf assertState}}
+\newcommand{\getbalance}{\textcolor{entry}{\bf getBalance}}
+\newcommand{\DEPOSIT}{\texttt{DEPOSIT}}
+\newcommand{\DISPUTE}{\texttt{DISPUTE}}
+\newcommand{\ON}{\texttt{ON}}
+\newcommand{\hashblue}{\textcolor{entry}{\bf hash}}
+
+% Colorful diagrams 
+\newcommand{\contract}{\textcolor{entry}{\bf contract }}
+\newcommand{\constructor}{\textcolor{entry}{\bf constructor }}
+\newcommand{\oninput}{\textcolor{entry}{\bf function }}
+\newcommand{\view}{\textcolor{entry}{\bf view}}
+\newcommand{\pure}{\textcolor{entry}{\bf pure}}
+\newcommand{\internal}{\textcolor{entry}{\bf internal}}
+\newcommand{\public}{\textcolor{entry}{\bf public}}
+\newcommand{\bytes}{\textcolor{entry}{\bf bytes}}
+\newcommand{\memory}{\textcolor{entry}{\bf memory}}
+\newcommand{\storage}{\textcolor{entry}{\bf storage}}
+\newcommand{\addr}{\textcolor{entry}{\bf address}}
+\newcommand{\uinteight}{\textcolor{entry}{\bf uint8}}
+\newcommand{\uint}{\textcolor{entry}{\bf uint256}}
+\newcommand{\uintno}{\textcolor{entry}{\bf uint}}
+\newcommand{\intno}{\textcolor{entry}{\bf int}}
+%\newcommand{\bytes}{\textcolor{entry}{\bf bytes}}
+\newcommand{\strings}{\textcolor{entry}{\bf string}}
+\newcommand{\struct}{\textcolor{entry}{\bf struct}}
+\newcommand{\returns}{\textcolor{entry}{\bf returns}}
+\newcommand{\stringlitt}[1]{\texttt{\textcolor{string}{#1}}}
+\newcommand{\comment}[1]{\texttt{\textcolor{OliveGreen}{#1}}}
+\newcommand{\byte}{\textcolor{entry}{\bf byte}}
+\newcommand{\byteone}{\textcolor{entry}{\bf byte1}}
+\newcommand{\bytetwo}{\textcolor{entry}{\bf bytetwo}}
+\newcommand{\bytethreetwo}{\textcolor{entry}{\bf bytes32}}
+\newcommand{\bool}{\textcolor{entry}{\bf bool}}
+\newcommand{\event}{\textcolor{entry}{\bf event}}
+\newcommand{\emit}{\textcolor{entry}{\bf emit}}
+\newcommand{\modifier}{\textcolor{entry}{\bf modifier}}
+\newcommand{\require}{\textcolor{entry}{\bf require}}
+\newcommand{\assert}{\textcolor{entry}{\bf assert}}
+\newcommand{\revert}{\textcolor{entry}{\bf revert}}
+\newcommand{\payable}{\textcolor{entry}{\bf payable}}
+\newcommand{\ifs}{\textcolor{entry}{\bf if}}
+\newcommand{\elses}{\textcolor{entry}{\bf else}}
+\newcommand{\for}{\textcolor{entry}{\bf for}}
+\newcommand{\dos}{\textcolor{entry}{\bf do}}
+\newcommand{\whiles}{\textcolor{entry}{\bf while}}
+\newcommand{\mapping}{\textcolor{entry}{\bf mapping}}
+\newcommand{\enum}{\textcolor{entry}{\bf enum}}
+\newcommand{\msgsender}{\textcolor{entry}{\bf msg.sender}}
+\newcommand{\block}{\textcolor{entry}{\bf block}}
+\newcommand{\tx}{\textcolor{entry}{\bf tx}}
+\newcommand{\msg}{\textcolor{entry}{\bf msg}}
+\newcommand{\gasprice}{\textcolor{entry}{\bf gasprice}}
+\newcommand{\origin}{\textcolor{entry}{\bf origin}}
+\newcommand{\gasleft}{\textcolor{entry}{\bf gasleft()}}
+\newcommand{\values}{\textcolor{entry}{\bf value}}
+\newcommand{\balance}{\textcolor{entry}{\bf balance}}
+\newcommand{\transfer}{\textcolor{entry}{\bf transfer}}
+\newcommand{\send}{\textcolor{entry}{\bf send}}
+\newcommand{\this}{\textcolor{entry}{\bf this}}
+\newcommand{\coinbase}{\textcolor{entry}{\bf coinbase}}
+\newcommand{\gaslimit}{\textcolor{entry}{\bf gaslimit}}
+\newcommand{\numbers}{\textcolor{entry}{\bf number}}
+\newcommand{\timestamp}{\textcolor{entry}{\bf timestamp}}
+\newcommand{\blockhash}{\textcolor{entry}{\bf blockhash}}
+\newcommand{\shatwo}{\textcolor{entry}{\bf sha256}}
+\newcommand{\shathree}{\textcolor{entry}{\bf keccak256}}
+\newcommand{\abiencode}{\textcolor{entry}{\bf abi.encodePacked}}
+\newcommand{\ecrecover}{\textcolor{entry}{\bf ecrecover}}
+\begin{document}
+
+	\title{2 Party State Assertion Channels } 
+	
+	\author{Chris Buckland and Patrick McCorry}
+	
+	\institute{Kings College London, UK\\
+		\email{patrick.mccorry@kcl.ac.uk}}
+	
+	
+	\maketitle
+	\begin{abstract}
+	%State channels are a scaling technique for cryptocurrencies as it lets a group of parties execute a smart contract locally amongst themselves instead of the global network. 
+	%In the best case, the application is no longer restricted by the underlying blockchain's latency and all execution is free as it remains local between the parties. 
+	%If there is a disagreement about the latest state of the smart contact, then any party can trigger a dispute which appoints the blockchain as an arbitrator to resolve it. 
+	An empirical case study to evaluate state channels as a scaling solution for cryptocurrencies demonstrated that providing an application's full state during the dispute process for a state channel is financially costly (i.e. \$1.5 to \$57.57 for a battleship game) which can hamper their real-world use. 
+	To overcome this issue, we present \emph{State Assertion Channels}, the first state channel to guarantee  an honest party is always refunded the cost if it becomes necessary to send an application's full state during the dispute process. 
+	Furthermore it ensures an honest party will pay an approximate fixed cost to continue an application's execution via the dispute process. 
+	We provide a proof of concept implementation which demonstrates it costs approximately \$x to submit evidence  regardless of the smart contract's application. 
+
+	\end{abstract} 
+
+\section{Introduction}
+
+Cryptocurrencies do not scale.
+The community are pursing three approaches to alleviate the scalability issue which includes new blockchain protocols \cite{bano2017consensus}, sharding transactions into distinct processing areas and off-chain protocols. 
+While the first two approaches can strictly increase the network's throughput, they harm the network's public verifiability as it reduces  the diversity of peers with the computatonal, bandwidth or storage requirements to validate all transactions on the network and ultimately hold the miner's accountable. 
+This paper focuses on the off-chain (or so-called Layer 2) approach that simply aims to reduce the network's load.
+One promiment off-chain approach are state channels that lets a group of parties process transactions (and execute a smart contract) locally amongst themselves instead of the global network. 
+In the best case, the application is no longer restricted by the underlying blockchain's latency and all execution is free as it remains local between the parties. 
+If there is a disagreement about the latest state of the smart contact, then any party can trigger a dispute and rely on the underlying blockchain to arbitrate the dispute's outcome.
+To arbitrate, the blockchain provides a fixed time period to collect evidence from all online parties before using this evidence to decide the off-chain smart contract's new state. 
+So far, there are two types of dispute processes for a state channel. 
+The first is a \emph{closure dispute} \cite{statechannelnetworks,battleship,celernetwork} as the dispute process is responsible for closing the channel, re-deploying the smart contract with the new state and letting parties continue its execution via the blockchain. 
+The second is a \emph{command-issuance dispute} \cite{miller2017sprites,mccorry2018pisa,counterfactual} as the dispute process collects commands from each party and then executes the command to compute the new state. 
+A recent case study empirically evaluated state channels as a scaling solution by building the  two player game battleship \cite{battleship}.
+They highlighted the most expensive aspect of any dispute process is sending the application's full state. 
+For example, the  case study claimed that sending the full game state approximately costs \$1.57 when the blockchain is not congested, but it can potentially sky-rocket to \$57.57 if the blockchain is congested. 
+The above can clearly hamper real-world use of state channels as an honest party will not use the dispute process if it is too clostly (and thus they cannot self-enforce the application's correct execution). 
+We propose, \emph{State Assertion Channels}, which has a command-issuance dispute process\footnote{The assertion concept isn't compatible with closure channels as the full state is required to re-deploy an application.}.  and overcomes the issue of sending the application's full state by leveraging the concept of an optimistic contract.
+Our contributions: 
+
+\begin{itemize}
+	\item We propose the first state channel that ensures an honest party never pays the cost to send the applicaton's full state during the dispute proess.  
+	\item We provide a proof of concept implementation and experimentally demonstrate that it is cost-effective to deploy. 
+\end{itemize}
+
+\section{Background} 
+
+
+
+\paragraph{Optimistic Smart Contracts } 
+
+
+An optimistic smart contract trades the cost of computation with time.
+This lets a smart contract accept an application's new state if no one has proved it is invalid within a fixed challenge period. 
+Briefly, one party submits the application's $\stateinfoi$, a command $\cmd$, its $\inputs$, the next $\stateinfoplus$ and a financial bond. 
+Thi asserts that $\stateinfoplus$ is the next state if the smart contract were to compute  $\stateinfoplus = \texttt{Transition}(\stateinfoi, \cmd, \inputs)$. 
+Other interested parties can compute the transition locally to verify its validity.
+If the asserted state is invalid, then anyone can issue a challenge by notifying the smart contract to compute the transition.
+If the challenge is successful, then the bond is used to refund the challenger. 
+Eigenmann, Moore and Johnson provided the first implementation of an optimistic contract for the Ethereum Name Service
+\cite{optimisticcontracts}, but so far this technique has alluded real-world use. 
+
+\paragraph{Command Issuance State Channels}
+Sprites proposed the concept of a command-issuance state channel, and since then it has been extended by PISA \cite{mccorry2018pisa}, Counterfactual \cite{coleman2018counterfactual} and Magmo \cite{magmo}. 
+At a high level, one party can submit the latest $\stateinfoi$ agreed by all parties before triggering the dispute process.
+The smart contract provides a fixed time period for all parties to submit commands and the contract is responsible for computing every command (i.e. state transition).
+In Sprites (and PISA), all commands are executed after the dispute process has expired.
+Whereas in Counterfactual and Magmo, the command is executed when it is submited and the dispute period's expiry time is reset (i.e. it dispute period is extended for every command). 
+The dispute process can be cancelled if one party submits a later state agreed by all parties, or after the expiry time. 
+
+\section{State Assertion Channels}
+We provide a high level overview of state assertion channels to show how it combines optimistic contracts and command issuance channels.
+Afterwards we'll provide a list of assumptions for the application contract $\appblue$ to ensure new assertions can always be challenged. 
+Finally we'll present the state assertion channel contract $\chanblue$ and the interaction amongst both parties, $\chanblue$ and $\appblue$. 
+
+\subsection{High level overview} 
+
+The state assertion contract $\chanblue$ and the application contract $\appblue$ must be deployed on the blockchain.
+Each party must lock coins into the state channel before they can begin co-operatively executing the application off-chain amongst themselves. 
+If there is a disagreement off-chain, then both parties can continue its progression via the dispute process.
+Our contribution involves changing the dispute process to avoid sending the full application's state.
+Instead parties will assert an application's new state by submitting a hash of the previous state $\hstatei$, the command $\cmd$, its $\inputs$, a hash of the next state $\hstateplus$ and a financial \texttt{bond}. 
+%This asserts that $\hstateplus$ represents the application's new state if the command (and its input) was executed by $\appblue$. 
+The dispute process provides a fixed time period for the counterparty to verify the assertion by computing the state transition locally. 
+To challenge an assertion, the party submits the previous $\stateinfominus$ which lets $\chanblue$ verify the assertion was indeed correct by executing the transition via $\appblue$.  
+If the honest party successfully challenges an assertion and proves it is invalid, then they are sent the \texttt{bond} as a refund.
+Thus an honest party can always continue an applicaton's execution by asserting a hash of the next state, and they are always refunded the cost of challenging an invalid assertion. 
+
+\subsection{Application Contract Assumptions} \label{sec:assumptions} 
+
+\paragraph{Turn-based application} 
+We assume it is a turn-based application and each party performs their state transition in turn. 
+As well, $\appblue$ must be instantiated on the blockchain to ensure its address is provided to the  state assertion contract $\chanblue$. 
+
+\paragraph{Single transition function} 
+The application contract implements a transition function which accepts the full state, a command and a list of inputs.
+The application contract is responsible for computing a state transition and returning a hash of the new state via 
+$	\hstateplus := \texttt{Transition}(\stateinfoi, \cmd, \inputs); $.
+The application contract is stateless and the state must be supplied to compute a state transition. 
+
+\paragraph{No exceptions or out-of-gas errors} 
+The application's transition function must return a hash of the state $\hstate$.
+If the command doesn't exist or its execution simply fails, then it should return $\hstate = 0$. 
+This ensures $\chanblue$ can always verify a state assertion's validity.
+If out-of-gas exceptions were permitted by an application, then it can be leveraged to prevent an honest user challenging it (i.e. $\chanblue.\chanchallenge()$'s execution will never complete). 
+
+\subsection{Assertion Channel Overview} 
+Figure \ref{fig:fallback} presents the state channel assertion contract.
+We'll use it to aid the following overview on how to instantiate the contract, authorise states off-chain, how to trigger a dispute, how to submit and challenge assertions, and finally how to close the channel.
+
+\paragraph{Channel status} 
+The channel has three flags $\texttt{Status} = \{\DEPOSIT, \ON, \DISPUTE\}$. 
+Both parties must deposit coins in $\chanblue$ before it will transition from $\DEPOSIT \rightarrow \ON$.  
+While the channel's status is set as $\ON$ both parties can co-operatively continue the application's progression off-chain by exchanging signatures for new states.
+If there is a disagreement about a state transition, then one party can trigger a dispute which changes the status from $\ON \rightarrow \DISPUTE$. 
+The contract self-enforces a turn-based dispute process.
+One party asserts a new state, and the other party can either challenge it by notifying the contract to check the state transition, or they can approve it by asserting a new state which extends it. 
+The dispute process can only finish and let the status change from $\DISPUTE \rightarrow \ON$ if one party submits a co-operatively signed new state. 
+
+\paragraph{Instantiating contract} 
+One party must deploy $\chanblue$ to the blockchain and initalise it with the address of both parties $\participant_{1},\participant_{2}$, the application's address $\appblue$, the fixed dispute period $\Delta$ and the required security bond $\texttt{bond}$. 
+Both parties must review the contracts $\chanblue,\appblue$ and the intialisation values before sending their deposit via $\chanblue.\depositblue()$.
+After $\chanblue$ has received both deposits (and before turning on the channel), it will compute the initial state $\stateinfo_\texttt{initial} =$ ($\bot$,\texttt{balance1},\texttt{balance2}) and declare the first turn will be taken by $\participant_{1}$.\footnote{We highlight a subtle difference between the initial state ($\bot$,\texttt{balance1},\texttt{balance2}) and the terminal state  (\texttt{balance1},\texttt{balance2}).}
+
+\paragraph{Progressing application off-chain} 
+Both parties can begin exchanging signatures to execute the application off-chain when the channel is $\ON$. 
+In each round, one party is responsible for proposing a state transition, and the other party is responsible for verifying the state transition before co-operatively authorising it. 
+To propose, the party computes $\stateinfoplus = \texttt{Transition}(\stateinfoi, \inputs, \cmd)$, they hash the state $\hstateplus = \texttt{hash}(\stateinfoplus)$ and they sign its hash $\sigma_{\participant_{1}} = \sign(\hstateplus, \monotoniccounter+1, \chanblue, \participant_{\texttt{turn}})$, where $\participant_{\texttt{turn}}$ specifies the next party's turn. 
+The proposer must send $\hstateplus, \monotoniccounter+1, \sigma_{\participant}$ to the counterparty. 
+To verify, the counterparty computes state transition and the state hash $\hstateplus'$ before checking if $\hstateplus' == \hstateplus$. 
+If this condition is satisified (and $\monotoniccounter+1$ is the largest counter so far), then the counterparty signs 
+$\sigma_{\participant_{2}} = \sign(\hstateplus, \monotoniccounter+1, \chanblue, \participant_{\texttt{turn}})$ and sends their signature $\sigma_{\participant_{1}}$ to the proposer. 
+
+\paragraph{Triggering a dispute} 
+In general, a dispute must be triggered if the counterparty stops honestly following the protocol (i.e. aborts and stops responding) and there are two cases to consider.
+Either the proposer is waiting on a signature from the verifier to authorise the new state, or the verifier is waiting on the proposer to propose a new state transition. 
+In both cases, each party waits for a local time-out before submiting the most recently $\hstatei$ via $\chanblue.\setstateblue()$ and triggering a dispute via $\chanblue.\triggerdispute()$. 
+The signed state hash includes $\participant_{\texttt{turn}}$ and thus $\chanblue$ waits for a new state assertion from the named party before $\texttt{deadline} = \texttt{now} + \Delta$.
+To continue off-chain and cancel the dispute, one party must submit a co-operatively signed $\hstate$ (with a larger counter $\monotoniccounter$) via $\chanblue.\setstateblue$. 
+
+\paragraph{Submitting a state assertion} 
+The named party $\participant_{\texttt{turn}}$ must send an asserted  $\hstateplus$, the command $\cmd$ and its inputs $\inputs$ using $\chanblue.\assertstate()$ before the dispute process expiry time $\texttt{deadline}$. 
+Every time a state assertion $\hstateplus$ is submitted, the contract resets the deadline $\texttt{deadline} = \texttt{now} + \Delta$ and stores the previous state assertion $\hstatei$ as accepted. 
+Furthermore the contract records that it is the counterparty's turn to respond.
+In terms of the financial bond, the contract only needs to store a single \texttt{bond} per party which can be collected when the party asserts a new state or when the parties send their initial deposit. 
+
+\paragraph{Responding to a state assertion} 
+The counterparty is responsible for verifying if a state assertion is correct by computing $\stateinfoplus = \texttt{Transition}(\stateinfoi, \cmd, \inputs)$ locally and checking if the asserted $\hstateplus$ represents $\stateinfoplus$. 
+If the state assertion is valid, then the counterparty can continue the application's execution by responding with a new state assertion using $\chanblue.\assertstate()$.
+By continuing the application's execution, the counterparty is agreeing that the previous state assertion is valid. 
+If the state assertion is invalid, then the counterparty can challenge it by supplying the plaintext state $\stateinfoi$ to the contract using $\chanblue.\chanchallenge()$. 
+The contract will compute the transition and confirm if $\hstateplus$ represents the new state $\stateinfoplus$. 
+If the challenger is successful and proves the state assertion as invalid, they are sent all coins in the channel (including the counterparty's \texttt{bond} to refund the cost of this transaction). 
+
+\paragraph{Reaching the terminal state} 
+
+In Section \ref{sec:assumptions}, we assumed an application's execution will always reach a terminal state which is simply the final balance of both parties $\stateinfo_{\texttt{final}}$ = (\texttt{balance1},\texttt{balance2}).
+%and both parties will be sent their respective final balance (alongside their security bonds) if the state is submitted to the contract using $\chanblue.\resolveblue()$. 
+The final  $\hstate_{\texttt{final}}$ must be accepted by the assertion contract $\chanblue$ before both parties are sent their final balance by supplying  $\stateinfo_{\texttt{final}}$ to $\chanblue.\resolveblue()$. 
+It is clear if both parties continue the application's execution co-operatively off-chain, then they can simply send the terminal state hash via $\chanblue.\setstateblue()$ before resolving the channel. 
+On the other hand, the dispute process enforces turn-based state assertions to ensure that one party will eventually propose the terminal state hash via $\chanblue.\assertstate()$. 
+When the terminal state hash is reached, the counterparty's only option is to submit  $\stateinfo_{\texttt{final}}$ before the deadline using $\chanblue.\resolveblue()$ 
+
+\section{Discussion and Future Work}
+
+%\paragraph{Proof of concept implementation} 
+%Table 1 outlines the gas costs for creating the state channel smart contract and its dispute process. 
+%As we can see creating the smart contract costs x, and the entire dispute process for a single state assertion costs x. 
+%
+
+\paragraph{Honest party can always verify a state transition} 
+%An honest party can only challenge a state assertion if they have a copy of the previous $\stateinfo$.
+There are only two opportunities for a new state hash to be accepted by $\chanblue$. 
+%Thus the honest party must have the previous state in plaintext as they must verify the state transition before accepting it.
+The first opportunity requires one party to submit the state hash via $\chanblue.\setstateblue()$ which requires both parties to have already signed it. 
+The second opportunity requires one party to submit $\hstatei$ via $\chanblue.\assertstate()$ and for the honest party to continue the application's execution by asserting the next $\hstateplus$ via $\chanblue.\assertstate()$. 
+The contract can accept $\hstatei$ as the first party asserted it was correct, and the second party continued the application's execution instead of challenging it. 
+Thus an honest party will always have a copy of the previous $\stateinfo$ to verify state transitions and issue challenges. 
+
+\paragraph{Motivation for turn-based commands} 
+There are two motivations for the turn-based channel. 
+First each party can submit a state assertion and the counterparty is always provided an opportunity to accept or challenge it. 
+Second, each state assertion must strictly build upon a previously accepted state hash. 
+If there are two or more state assertions that reference the same previous state hash, then $\chanblue$ can only accept one state assertion. 
+Because of the requirement to strictly order state assertions and the need to `accept the first received state assertion', this lets an attacker simply pay a higher fee and front-run an honest party to ensure their state assertion is always accepted first (i.e. front-running ensures an honest party's state assertion is never accepted by $\chanblue$). 
+Thus the turn-based nature of this state channel prevents the above front-running attack. 
+
+%\paragraph{Contract enforces the turn-based command} 
+%It is always clear to the contract whose turn it is to assert a new state and we consider two cases. 
+%If the assertin channel is instantiated, but the application's execution as not progressed off-chain, then it is always the first participant's turn. 
+%Otherwise, both parties always explicitly acknowledge who should take the next turn when they are authorising a new state hash off-chain.
+%Thus if one party submits  the latest state via $\chanblue.\setstateblue()$ before triggering a dispute, then the contract is informed whose turn is next. 
+
+
+\paragraph{Enforcing time-based events} 
+The assertion channel is responsible for enforcing time-based events with the dispute period $\Delta$ and the application doesn't need to consider it. 
+When the application is co-operatively progressing off-chain, an honest party will wait for a local timeout before triggering a dispute via the blockchain. 
+For every new state assertion, the dispute process is reset to ensure each party has a time period of $\Delta$ to take their next move. 
+If a party doesn't assert a new state before the deadline, then the honest party will notify the contract via $\chanblue.\timeoutblue()$.
+This terminates the application and sends all coins (including the bonds) to the honest party. 
+
+\paragraph{Bond Requirement} 
+Each party must deposit a bond to cover the cost of a successful challenge to their assertion. 
+The bond's value must consider the worst-case when a transaction fee spikes due to network congestion. 
+For example, in the battleship empirical case study it was highlighted that submitting the game's state can sky rocket from \$1.56 to approximately \$57 during network congestion.  
+If the security bond isn't sufficient to challenge a state assertion, then the the counterparty may not challenge it. 
+
+\paragraph{Offline parties and PISA} 
+There are two issues for a watching service like PISA \cite{mccorry2018pisa} to protect the channel. 
+First, an attacker can trigger a dispute with the latest agreed state hash, and then assert an invaid state hash that benefits the attacker.
+A watching service must have a copy of the latest state in plaintext to verify the invalid state transition and issue a challenge, but this hinders state privacy.
+Second, an attacker can issue a new state assertion and claim all coins after the deadline using $\chanblue.\timeoutblue()$. 
+To prevent a timeout, the offline party must delegate the authority to continue the application's execution to the watching service.
+Future work should consider whether the execution of an application can be delegated to a third party in an accountable manner 
+
+\bibliographystyle{plain}
+\bibliography{bib}
+
+%\section{Conclusion}
+%
+%\paragraph{Acknowledgements} Chris Buckland and Patrick McCorry are supported by an Ethereum Foundation
+%scaling grant, Ethereum Community Fund grant and a Research Institute grant.
+
+\begin{figure}[H]
+	\begin{boxedminipage}{\columnwidth}
+		\begin{tabular}{l}
+			\contract StateAssertionChannel \{ \\
+			\quad $\enum$ Status \{$\DEPOSIT$, $\ON$, $\DISPUTE$\} \\
+			\quad Status status; $\uintno$ deadline; $\hashblue$ hstate, $\uintno$ i; $\addr$ firstturn; \\ %\comment{// Latest state info}  \\
+			\quad $\addr$ asserter; $\hashblue$ prevstate; $\bytes$ input; $\uintno$ cmd;\\
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ setstate($\bytes[]$ \_sigs, $\uintno$ \_i, $\addr$ \_turn, $\hashblue$ \_newstate) \{ \\
+			\quad \quad \require(\_i $>$ i)); \comment{ // Largest counter so far} \\
+			\quad \quad $\hashblue$ hmsg = hash(\_i, \_newstate,\_turn, $\addr(\this)$);  \\
+			\quad \quad \require(verifySigs(hmsg, sigs, plist));  \comment{// Everyone signed new hstate} \\
+			\quad \quad status = Dispute.\ON; refundAllBonds(); \comment{// Cancel dispute and refund bonds} \\
+			\quad \quad bestRound = \_i; hstate = \_newstate;  firstturn = \_turn; \comment{// Agreed state} \\
+			\quad \}
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ triggerDispute() \{ \\
+			\quad \quad $\require$(status == Status.ON \& onlyParties()); \\
+			\quad \quad  status = Status.DISPUTE; \\
+			\quad \quad deadline = now + disputePeriod; \\
+			\quad \}
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ assertState($\hashblue$ \_prevstate, $\hashblue$ \_newstate, $\bytes$ input, $\uintno$ cmd) \{ \\
+			\quad \quad $\require$(status == Status.DISPUTE); \\
+			\quad \quad $\require$(\_prevstate == hstate \&\& checkCallerTurn()) \\ 
+			\quad \quad asserter = $\msgsender$; \comment{// Store name of asserter} \\ 
+			\quad \quad prev\_hstate = \_prevstate; hstate = \_newstate; \\ 
+			\quad \quad input = \_input; cmd = \_cmd; \\
+			\quad \quad deadline = now + disputePeriod; \comment{// Reset deadline after an assertion} \\
+			\quad \}
+			
+			
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ challengeAssertion($\bytes$ \_oldstate) \{ \\
+			\quad \quad \require(status == Status.DISPUTE); \\
+			\quad \quad \require(asserter != $\msgsender$); \comment{// Stop self-challenging} \\
+			\quad \quad \require(prev\_hstate == hash(\_oldstate)); \comment{// Verify old state is correct} \\
+			\quad \quad $\hashblue$ temphstate = $\appblue.\transitionblue$(asserter, \_oldstate, input, cmd); \\ 
+			\quad \quad $\ifs$(hstate != temphstate) \{ \comment{// Send all coins and bond to non-cheater.}  \} \\
+			\quad \}
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ timeOut() \{ \\
+			\quad \quad \require(now $>=$ deadline \&\& status == Status.dispute); \\ 
+			\quad \quad \comment{// Send all coins/bonds to asserter (i.e. last party to respond).} \\
+			\quad \}
+		\end{tabular}
+		\\
+		\\
+		\\
+		\begin{tabular}{l}
+			\quad $\oninput$ resolve($\uintno$ balance1, $\uintno$ balance2) \{ \\
+			\quad \quad $\ifs$(status == Status.Dispute) \{ \\
+			\quad \quad \quad $\require$(checkCallerTurn()); \comment{// Let non-asserter challenge or resolve.} \\
+			\quad \quad \} $\elses$ \{ \require(status == Status.ON); \} \comment{// No on-going dispute.} \\ 
+			\quad \quad $\require$(hstate == hash(balance1, balance2)); \comment{// Terminal state?} \\
+			\quad \quad \comment{// Send each party their final balance.} \\
+			\quad \}
+		\end{tabular}
+
+	   	\begin{tabular}{l}
+	   		\quad $\oninput$ deposit(); \comment{// Not implemented due to space} \\
+	   		\quad $\oninput$ onlyParties() $\returns(\bool)$; \comment{// Check if tx signer is whitelisted} \\
+	   		\quad $\oninput$ refundAllBonds() $\internal$; \comment{// Refunds all bonds} \\
+	   		\quad $\oninput$ checkCallerTurn() $\returns$($\bool$); \comment{Enforce turn based disputes} \\
+	   		\quad $\oninput$ verifySigs($\bytes$ hmsg, $\bytes[]$ sigs, $\addr[]$ signers) $\returns(\bool)$; \\
+	   		\}
+	   \end{tabular}
+	\end{boxedminipage}
+	
+	\caption{\label{fig:fallback} Example of the state assertion contract}
+\end{figure}
+\end{document}

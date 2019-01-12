@@ -1,0 +1,60 @@
+\begin{thebibliography}{10}
+
+\bibitem{bano2017consensus}
+Shehar Bano, Alberto Sonnino, Mustafa Al-Bassam, Sarah Azouvi, Patrick McCorry,
+  Sarah Meiklejohn, and George Danezis.
+\newblock Consensus in the age of blockchains.
+\newblock {\em arXiv preprint arXiv:1711.03936}, 2017.
+
+\bibitem{magmo}
+Tom Close and Andrew Stewart.
+\newblock Force-move games, 2018.
+\newblock \url{https://magmo.com/force-move-games.pdf}.
+
+\bibitem{coleman2018counterfactual}
+Jeff Coleman, Liam Horne, and Li~Xuanji.
+\newblock Counterfactual: Generalized state channels, 2018.
+
+\bibitem{statechannelnetworks}
+Stefan Dziembowski, Sebastian Faust, and Kristina Hostáková.
+\newblock General state channel networks.
+\newblock Cryptology ePrint Archive, Report 2018/320, 2018.
+\newblock \url{https://eprint.iacr.org/2018/320}.
+
+\bibitem{optimisticcontracts}
+Dean Eigenmann.
+\newblock Optimistic contracts.
+\newblock Accessed 10/01/2019,
+  https://medium.com/@decanus/optimistic-contracts-fb75efa7ca84.
+
+\bibitem{counterfactual}
+Liam~Horne Jeff~Coleman and Li~Xuanji.
+\newblock Counterfactual: Generalized state channels, 2018.
+\newblock \url{https://l4.ventures/papers/statechannels.pdf}.
+
+\bibitem{mccorry2018pisa}
+Patrick McCorry, Surya Bakshi, Iddo Bentov, Andrew Miller, and Sarah
+  Meiklejohn.
+\newblock Pisa: Arbitration outsourcing for state channels.
+\newblock {\em IACR Cryptology ePrint Archive}, 2018:582, 2018.
+
+\bibitem{battleship}
+Patrick McCorry, Chris Buckland, Surya Bakshi, Karl W{\"u}st, and Andrew
+  Miller.
+\newblock You sank my battleship! a case study to evaluate state channels as a
+  scaling solution for cryptocurrencies.
+
+\bibitem{miller2017sprites}
+Andrew Miller, Iddo Bentov, Ranjit Kumaresan, Suryai Bakshi, and Patrick
+  McCorry.
+\newblock Sprites: Payment channels that go faster than lightning.
+\newblock {\em CoRR abs/1702.05812}, 2017.
+
+\bibitem{celernetwork}
+ScaleSphere Foundation~Ltd. (“Foundation”).
+\newblock Celer network: Bring internet scale to every blockchain.
+\newblock Technical report.
+\newblock Accessed 10/01/2019,
+  https://www.celer.network/doc/CelerNetwork-Whitepaper.pdf.
+
+\end{thebibliography}
