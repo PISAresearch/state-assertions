@@ -4,8 +4,6 @@ const StateAssertionChannel = artifacts.require("StateAssertionChannel");
 const App = artifacts.require("App");
 
 contract("StateAssertionChannel", async accounts => {
-    before(async () => {});
-
     it("1. deploy, deposits, triggerdispute, assertstate, payout", async () => {
         const gasLib = [];
         const player0 = accounts[0];
@@ -176,14 +174,6 @@ contract("StateAssertionChannel", async accounts => {
 
         await channel.challengeCommand(state, inputBytes, {from: player1});
 
-    //     const hashedBalances = sigTools.hashBalances(10, 10);
-    //     await channel.assertState(dummyNewState, hashedBalances, inputBytes, command, {from : player1, value: bondAmount});
-
-
-    //    // accept and payout
-    //    await channel.resolve(10, 10, { from: player0 });
-
-        // TODO: payout still required
         logGasLib(gasLib);
     });
 
