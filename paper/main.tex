@@ -372,7 +372,7 @@ When the terminal state hash is reached, the counterparty's only option is to su
 \section{Discussion and Future Work}
 
 \paragraph{Proof of concept implementation} 
-We developed a proof of concept for the Ethereum blockchain. Our smart contract is written in Solidity\footnote{https://github.com/ethereum/solidity}, and gas costs were measured using Ganache\footnote{https://github.com/trufflesuite/ganache-cli}. The contract took 2,943,664 gas to deploy, approximately \$0.97 using the gas price of 2.6 Gwei and the conversion rate of 1 ether = \$127 which is the real world rate in January 2019. The cost to make a state assertion is 59,774+39.5n gas (\$0.02), where \textit{n} corresponds to the number of bytes supplied as $\inputs$ to the assertion.
+We developed a proof of concept for the Ethereum blockchain. Our smart contract is written in Solidity\footnote{https://pastebin.com/UBVvZ0FU}, and gas costs were measured using a private network. The assertions contract costs 2,943,664 gas to deploy, approximately \$0.97 using the gas price of 2.6 Gwei and the conversion rate of 1 ether = \$127 which is the real world rate in January 2019. The cost to make a state assertion is 59,774+39.5n gas (\$0.02), where \textit{n} corresponds to the number of bytes supplied as $\inputs$ to the assertion.
 
 \paragraph{Honest party can always verify a state transition} 
 %An honest party can only challenge a state assertion if they have a copy of the previous $\stateinfo$.
@@ -414,15 +414,14 @@ If the security bond isn't sufficient to challenge a state assertion, then the c
 
 \paragraph{Offline parties and PISA} 
 %There are two issues for a watching service like PISA \cite{mccorry2018pisa} to protect the channel. 
-It is possible for an attacker to trigger a dispute with the latest agreed state hash, and then assert an invalid state hash that benefits the attacker.
-Thus, if a party is offline and unable to challenge, an attacker can transition the channel to a state that was never agreed to by the party and does conform to a valid state transition.
-If the party uses a watching service, like PISA \cite{mccorry2018pisa}, then the watching service must have a copy of the latest state in plaintext to verify the invalid state transition and challenge, but this hinders state privacy.
+If a party is offline (and thus unable to challenge), then the counterparty can trigger a dispute with the latest agreed hash and then assert an invalid state hash that benefits the attacker (i.e. send them all the coins).
+If a party relies a watching service, like PISA \cite{mccorry2018pisa}, then the watching service must have a copy of the latest state in plaintext to verify the invalid state transition and issue a challenge, but this hinders state privacy.
 %Second, an attacker can issue a new state assertion and claim all coins after the deadline using $\chanblue.\timeoutblue()$. 
 %To prevent a timeout, the offline party must delegate the authority to continue the application's execution to the watching service.
 %Future work should consider whether the execution of an application can\ be delegated to a third party in an accountable manner.
 
-\paragraph{N-party state assertions}
-The state assertion paradigm can be extended to n-party state channels. To do so these channels would require that turns progress in a round-robin fashion, and that $\chanblue$ store the last \textbf{n} state assertions. This is so that a party can be sure that a state assertion will not be accepted unless they explicitly apply their own state assertion after it.
+\paragraph{Extending to N-parties}
+Future work should investigate how the state assertion paradigm could be extended to n-party state channels. Channels could progress in a round-robin fashion and store the last \textbf{n} state assertions. This is so that a party can be sure that a state assertion will not be accepted unless they explicitly apply their own state assertion after it.
 
 \bibliographystyle{plain}
 \bibliography{bib}
