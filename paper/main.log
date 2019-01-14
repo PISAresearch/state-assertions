@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 11:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 14:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1762,124 +1762,126 @@ Package hyperref Warning: bookmark level for unknown author defaults to 0.
 
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5] [6]
-(./main.bbl
-Underfull \hbox (badness 10000) in paragraph at lines 25--29
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
+Overfull \hbox (8.12029pt too wide) in paragraph at lines 375--376
+ []\OT1/cmr/m/it/10 Proof of con-cept im-ple-men-ta-tion[] \OT1/cmr/m/n/10 We d
+e-vel-oped a proof of con-cept for the Ethereum
+ []
+
+[6] (./main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 21--25
 []\OT1/cmr/m/n/9 Dean Eigen-mann.  Op-ti-mistic con-tracts.  Ac-cessed 10/01/20
 19,
  []
 
 
-Underfull \hbox (badness 1215) in paragraph at lines 54--59
+Underfull \hbox (badness 1831) in paragraph at lines 50--55
 []\OT1/cmr/m/n/9 ScaleSphere Foun-da-tion Ltd. (\Foun-da-tion").  Celer net-wor
 k: Bring in-ter-
  []
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 54--59
+Underfull \hbox (badness 2181) in paragraph at lines 50--55
 \OT1/cmr/m/n/9 net scale to ev-ery blockchain.  Tech-ni-cal re-port.  Ac-cessed
  10/01/2019,
  []
 
 )
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 433.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 438.
 
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 433.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 438.
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Overfull \hbox (0.81657pt too wide) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
+
+ []
+
+
+Overfull \hbox (0.81657pt too wide) in paragraph at lines 437--513
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--508
+Underfull \hbox (badness 10000) in paragraph at lines 437--513
 
  []
 
 
-Overfull \hbox (5.58472pt too wide) in paragraph at lines 509--518
+Overfull \hbox (5.58472pt too wide) in paragraph at lines 514--523
 [][] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7]
+[7]
 Overfull \vbox (97.66171pt too high) has occurred while \output is active []
 
 
 [8]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 522.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 522.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 527.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 527.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 522.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 522.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 527.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 527.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: D4CC4355979D8029F3532C1A261E7FFB;137.
+(rerunfilecheck)             Checksum: A4BE67CF219FDCBE79B963D21732278F;149.
  ) 
 Here is how much of TeX's memory you used:
- 31380 strings out of 494847
- 609472 string characters out of 6179079
- 760769 words of memory out of 5000000
- 34181 multiletter control sequences out of 15000+600000
+ 31381 strings out of 494847
+ 609448 string characters out of 6179079
+ 760721 words of memory out of 5000000
+ 34180 multiletter control sequences out of 15000+600000
  543339 words of font info for 70 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  62i,18n,92p,10399b,720s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1903,10 +1905,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist
 public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt9.pfb>
-Output written on main.pdf (8 pages, 259714 bytes).
+Output written on main.pdf (8 pages, 261971 bytes).
 PDF statistics:
- 224 PDF objects out of 1000 (max. 8388607)
- 178 compressed objects within 2 object streams
- 49 named destinations out of 1000 (max. 500000)
+ 230 PDF objects out of 1000 (max. 8388607)
+ 183 compressed objects within 2 object streams
+ 51 named destinations out of 1000 (max. 500000)
  29 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{1}
 
 \bibitem{bano2017consensus}
 Shehar Bano, Alberto Sonnino, Mustafa Al-Bassam, Sarah Azouvi, Patrick McCorry,
@@ -10,10 +10,6 @@ Shehar Bano, Alberto Sonnino, Mustafa Al-Bassam, Sarah Azouvi, Patrick McCorry,
 Tom Close and Andrew Stewart.
 \newblock Force-move games, 2018.
 \newblock \url{https://magmo.com/force-move-games.pdf}.
-
-\bibitem{coleman2018counterfactual}
-Jeff Coleman, Liam Horne, and Li~Xuanji.
-\newblock Counterfactual: Generalized state channels, 2018.
 
 \bibitem{statechannelnetworks}
 Stefan Dziembowski, Sebastian Faust, and Kristina Hostáková.
