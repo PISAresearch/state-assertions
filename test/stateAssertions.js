@@ -10,7 +10,7 @@ contract("StateAssertionChannel", async accounts => {
         const player1 = accounts[1];
         const bondAmount = 20;
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 10, accounts[2], bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 10, accounts[2], bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -23,14 +23,21 @@ contract("StateAssertionChannel", async accounts => {
         /// setstate ///
         const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
@@ -38,8 +45,8 @@ contract("StateAssertionChannel", async accounts => {
         const state = "0xface";
         const dummyPrevState = sigTools.hashBytes(state);
         const dummyNewState = "0x3456789873654523678728675367827445678765678765678987655665676568";
-        let inputBytes = "0x"
-        for (let index = 0; index < 0; index++) {
+        let inputBytes = "0x";
+        for (let index = 0; index < 2; index++) {
             inputBytes += "5";
         }
 
@@ -48,16 +55,42 @@ contract("StateAssertionChannel", async accounts => {
 
         /// assert states ///
         const hashedBalances = sigTools.hashBalances(10, 10);
-        await channel.assertState(dummyHstate, hashedBalances, inputBytes, command, {from : player0, value: bondAmount});
+        await channel.assertState(
+            dummyHstate,
+            hashedBalances,
+            inputBytes,
+            command,
+
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
         // TODO: check the event is raised here
 
+        const inputHash = sigTools.hashBytes(inputBytes);
+        const assertionHash = sigTools.hashAssertion(player0, inputHash, command, hashedBalances);
         // accept and payout
-        await channel.resolve(10, 10, { from: player1 });
+        await channel.resolve(
+            10,
+            10,
+            dummyHstate,
+            
+            assertionHash,
+            player0,
+            inputHash,
+            command,
+            hashedBalances,
+
+            { from: player1 }
+        );
 
         // TODO: payout still required
         logGasLib(gasLib);
     });
-
 
     it("2. deploy, deposits, triggerdispute, assertstate, challengeCommand, payout", async () => {
         const gasLib = [];
@@ -67,7 +100,7 @@ contract("StateAssertionChannel", async accounts => {
         const AppContract = await App.new();
 
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 10, AppContract.address, bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 10, AppContract.address, bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -82,22 +115,28 @@ contract("StateAssertionChannel", async accounts => {
         const dummyHstate = sigTools.hashBytes(state);
         //const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
         /// triggerDispute ///
         const stateOff = "0xofff";
         const dummyNewState = sigTools.hashBytes(stateOff);
-        let inputBytes = "0x"
-        for (let index = 0; index < 0; index++) {
+        let inputBytes = "0x";
+        for (let index = 0; index < 2; index++) {
             inputBytes += "5";
         }
 
@@ -105,18 +144,71 @@ contract("StateAssertionChannel", async accounts => {
         await channel.triggerdispute({ from: player1 });
 
         /// assert states ///
-        
-        await channel.assertState(dummyHstate, dummyNewState, inputBytes, command, {from : player0, value: bondAmount});
-        // TODO: check the event is raised here
 
-        await channel.challengeCommand(state, inputBytes, {from: player1});
+        await channel.assertState(
+            dummyHstate,
+            dummyNewState,
+            inputBytes,
+            command,
+
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
+
+        // TODO: check the event is raised here
+        const inputHash = sigTools.hashBytes(inputBytes);
+        const assertionHash = sigTools.hashAssertion(player0, inputHash, command, dummyNewState);
+        await channel.challengeCommand(
+            state,
+            inputBytes,
+
+            dummyHstate,
+            assertionHash,
+            player0,
+            inputHash,
+            command,
+            dummyNewState,
+
+            { from: player1 }
+        );
 
         const hashedBalances = sigTools.hashBalances(10, 10);
-        await channel.assertState(dummyNewState, hashedBalances, inputBytes, command, {from : player1, value: bondAmount});
 
+        await channel.assertState(
+            dummyNewState,
+            hashedBalances,
+            inputBytes,
+            command,
 
-       // accept and payout
-       await channel.resolve(10, 10, { from: player0 });
+            dummyHstate,
+            player0,
+            inputHash,
+            command,
+            dummyNewState,
+
+            { from: player1, value: bondAmount }
+        );
+
+        const resolveAssertionHash = sigTools.hashAssertion(player1, inputHash, command, hashedBalances);
+        // accept and payout
+        await channel.resolve(
+            10,
+            10,
+
+            dummyNewState,
+            resolveAssertionHash,
+            player1,
+            inputHash,
+            command,
+            hashedBalances,
+
+            { from: player0 }
+        );
 
         // TODO: payout still required
         logGasLib(gasLib);
@@ -130,7 +222,7 @@ contract("StateAssertionChannel", async accounts => {
         const AppContract = await App.new();
 
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 10, AppContract.address, bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 10, AppContract.address, bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -145,22 +237,28 @@ contract("StateAssertionChannel", async accounts => {
         const dummyHstate = sigTools.hashBytes(state);
         //const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
         /// triggerDispute ///
         const stateOff = "0xofffgg";
         const dummyNewState = sigTools.hashBytes(stateOff);
-        let inputBytes = "0x"
-        for (let index = 0; index < 0; index++) {
+        let inputBytes = "0x";
+        for (let index = 0; index < 2; index++) {
             inputBytes += "5";
         }
 
@@ -168,11 +266,46 @@ contract("StateAssertionChannel", async accounts => {
         await channel.triggerdispute({ from: player1 });
 
         /// assert states ///
-        
-        await channel.assertState(dummyHstate, dummyNewState, inputBytes, command, {from : player0, value: bondAmount});
+        await channel.assertState(
+            dummyHstate,
+            dummyNewState,
+            inputBytes,
+            command,
+
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
+
+
+
+
         // TODO: check the event is raised here
 
-        await channel.challengeCommand(state, inputBytes, {from: player1});
+        // await channel.challengeCommand(state, inputBytes, { from: player1 });
+
+        const inputHash = sigTools.hashBytes(inputBytes);
+        const assertionHash = sigTools.hashAssertion(player0, inputHash, command, dummyNewState);
+        await channel.challengeCommand(
+            state,
+            inputBytes,
+
+            dummyHstate,
+            assertionHash,
+            player0,
+            inputHash,
+            command,
+            dummyNewState,
+
+            { from: player1 }
+        );
+
+
+
 
         logGasLib(gasLib);
     });
@@ -185,7 +318,7 @@ contract("StateAssertionChannel", async accounts => {
         const AppContract = await App.new();
 
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -200,21 +333,27 @@ contract("StateAssertionChannel", async accounts => {
         const dummyHstate = sigTools.hashBytes(state);
         //const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
         /// triggerDispute ///
         const stateOff = "0xofff";
         const dummyNewState = sigTools.hashBytes(stateOff);
-        let inputBytes = "0x"
+        let inputBytes = "0x";
         for (let index = 0; index < 0; index++) {
             inputBytes += "5";
         }
@@ -223,9 +362,22 @@ contract("StateAssertionChannel", async accounts => {
         await channel.triggerdispute({ from: player1 });
 
         /// assert states ///
-        await channel.assertState(dummyHstate, dummyNewState, inputBytes, command, {from : player0, value: bondAmount});
+        await channel.assertState(
+            dummyHstate,
+            dummyNewState,
+            inputBytes,
+            command,
 
-        await channel.timeout()
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
+
+        await channel.timeout();
 
         // TODO: payout still required
         logGasLib(gasLib);
@@ -239,7 +391,7 @@ contract("StateAssertionChannel", async accounts => {
         const AppContract = await App.new();
 
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -254,21 +406,27 @@ contract("StateAssertionChannel", async accounts => {
         const dummyHstate = sigTools.hashBytes(state);
         //const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
         /// triggerDispute ///
         const stateOff = "0xofff";
         const dummyNewState = sigTools.hashBytes(stateOff);
-        let inputBytes = "0x"
+        let inputBytes = "0x";
         for (let index = 0; index < 0; index++) {
             inputBytes += "5";
         }
@@ -277,7 +435,21 @@ contract("StateAssertionChannel", async accounts => {
         await channel.triggerdispute({ from: player1 });
 
         /// assert states ///
-        await channel.assertState(dummyHstate, dummyNewState, inputBytes, command, {from : player0, value: bondAmount});
+        await channel.assertState(
+            dummyHstate,
+            dummyNewState,
+            inputBytes,
+            command,
+
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
+
 
         // TODO: payout still required
         logGasLib(gasLib);
@@ -291,7 +463,7 @@ contract("StateAssertionChannel", async accounts => {
         const AppContract = await App.new();
 
         const StateAssertion = createGasProxy(StateAssertionChannel, gasLib, web3);
-        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);        
+        const channel = await StateAssertion.new(player0, player1, 0, AppContract.address, bondAmount);
 
         /// deposit ///
         const depositValue = 10;
@@ -306,21 +478,27 @@ contract("StateAssertionChannel", async accounts => {
         const dummyHstate = sigTools.hashBytes(state);
         //const dummyHstate = "0x3456789873654523678728675367827445678765678765678987655665676567";
         const dummyRound = 1;
-        const dummyFirstTurn = player0;
+        const dummyFirstTurn = true;
         const player0Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player0)
         );
         const player1Sig = sigTools.chopUpSig(
             await sigTools.hashAndSignState(dummyHstate, dummyRound, dummyFirstTurn, channel.address, player1)
         );
-        const setStateResult = await channel.setstate([...player0Sig, ...player1Sig], dummyRound, dummyFirstTurn, dummyHstate, {from: player1});
+        const setStateResult = await channel.setstate(
+            [...player0Sig, ...player1Sig],
+            dummyRound,
+            dummyFirstTurn,
+            dummyHstate,
+            { from: player1 }
+        );
         assert.equal(setStateResult.logs[0].args["bestround"].toNumber(), dummyRound);
         assert.equal(setStateResult.logs[0].args["hstate"], dummyHstate);
 
         /// triggerDispute ///
         const stateOff = "0xofff";
         const dummyNewState = sigTools.hashBytes(stateOff);
-        let inputBytes = "0x"
+        let inputBytes = "0x";
         for (let index = 0; index < 10000; index++) {
             inputBytes += "5";
         }
@@ -329,7 +507,20 @@ contract("StateAssertionChannel", async accounts => {
         await channel.triggerdispute({ from: player1 });
 
         /// assert states ///
-        await channel.assertState(dummyHstate, dummyNewState, inputBytes, command, {from : player0, value: bondAmount});
+        await channel.assertState(
+            dummyHstate,
+            dummyNewState,
+            inputBytes,
+            command,
+
+            dummyHstate,
+            accounts[5],
+            "0x00000000000000000000000000000000",
+            0,
+            "0x00000000000000000000000000000000",
+
+            { from: player0, value: bondAmount }
+        );
 
         // TODO: payout still required
         logGasLib(gasLib);
@@ -345,7 +536,7 @@ const sigTools = {
         let msg = web3.utils.soliditySha3(
             { t: "bytes32", v: hState },
             { t: "uint256", v: round },
-            { t: "address", v: firstturn },
+            { t: "bool", v: firstturn },
             { t: "address", v: channelAddress }
         );
         const sig = await web3.eth.sign(msg, playerAddress);
@@ -353,16 +544,20 @@ const sigTools = {
     },
 
     hashBalances: (balance0, balance1) => {
-        return web3.utils.soliditySha3(
-            { t: "uint256", v: balance0 },
-            { t: "uint256", v: balance1 }
-        )
+        return web3.utils.soliditySha3({ t: "uint256", v: balance0 }, { t: "uint256", v: balance1 });
     },
 
-    hashBytes: (byteString) => {
+    hashBytes: byteString => {
+        return web3.utils.soliditySha3({ t: "bytes", v: byteString });
+    },
+
+    hashAssertion: (asserter, inputHash, command, assertedState) => {
         return web3.utils.soliditySha3(
-            { t: "bytes", v: byteString}
-        )
+            { t: "address", v: asserter },
+            { t: "bytes32", v: inputHash },
+            { t: "uint256", v: command },
+            { t: "bytes32", v: assertedState }
+        );
     },
 
     // hashAndSignClose: async (hState, round, channelAddress, playerAddress) => {
