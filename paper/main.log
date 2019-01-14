@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 16:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 17:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1763,7 +1763,7 @@ Package hyperref Warning: bookmark level for unknown author defaults to 0.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
-Overfull \hbox (8.12029pt too wide) in paragraph at lines 375--376
+Overfull \hbox (8.12029pt too wide) in paragraph at lines 377--378
  []\OT1/cmr/m/it/10 Proof of con-cept im-ple-men-ta-tion[] \OT1/cmr/m/n/10 We d
 e-vel-oped a proof of con-cept for the Ethereum
  []
@@ -1787,80 +1787,80 @@ Underfull \hbox (badness 2181) in paragraph at lines 50--55
  []
 
 )
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 437.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 439.
 
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 437.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 439.
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Overfull \hbox (0.81657pt too wide) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
+
+ []
+
+
+Overfull \hbox (0.81657pt too wide) in paragraph at lines 438--514
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--512
+Underfull \hbox (badness 10000) in paragraph at lines 438--514
 
  []
 
 
-Overfull \hbox (5.58472pt too wide) in paragraph at lines 513--522
+Overfull \hbox (5.58472pt too wide) in paragraph at lines 515--524
 [][] 
  []
 
@@ -1869,11 +1869,11 @@ Overfull \vbox (97.66171pt too high) has occurred while \output is active []
 
 
 [8]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 526.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 526.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 528.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 528.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 526.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 526.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 528.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 528.
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: F66197A28F6521CCA789BFF1EC921F4E;151.
  ) 
@@ -1905,7 +1905,7 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist
 public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt9.pfb>
-Output written on main.pdf (8 pages, 261852 bytes).
+Output written on main.pdf (8 pages, 261689 bytes).
 PDF statistics:
  228 PDF objects out of 1000 (max. 8388607)
  181 compressed objects within 2 object streams
