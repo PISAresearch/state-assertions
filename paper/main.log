@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 17:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 17:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1905,7 +1905,7 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist
 public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt9.pfb>
-Output written on main.pdf (8 pages, 261689 bytes).
+Output written on main.pdf (8 pages, 261690 bytes).
 PDF statistics:
  228 PDF objects out of 1000 (max. 8388607)
  181 compressed objects within 2 object streams
