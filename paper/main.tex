@@ -468,6 +468,7 @@ Future work should consider whether the execution of an application can be deleg
 			\quad \quad asserter = $\msgsender$; input = \_input; cmd = \_cmd; \comment{// Store assertion} \\
 			\quad \quad $\hstatei$ = $\hstateplus$; $\hstateplus$ = \_$\hstateplus$; \comment{// i accepted. i+1 assertion} \\ 
 			\quad \quad deadline = now + disputePeriod; \comment{// Reset deadline after an assertion} \\
+			\quad \quad progressTurn()); \comment{// Increment the turn counter} \\
 			\quad \}
 			
 			
@@ -477,9 +478,9 @@ Future work should consider whether the execution of an application can be deleg
 		\\
 		\begin{tabular}{l}
 			\quad $\oninput$ challengeAssertion($\bytes$ \_oldstate) \{ \\
-			\quad \quad \require(status == Status.DISPUTE); \require(asserter != $\msgsender$);  \\
+			\quad \quad $\require$(status == Status.DISPUTE \texttt{AND} 		checkCallerTurn()); \\
 			\quad \quad \require($\hstatei$ == hash(\_oldstate) AND assertion); \comment{// Assertion exists} \\
-			\quad \quad $\hashblue$ checkh = $\appblue.\transitionblue$(asserter, \_oldstate, input, cmd); \comment{// Compute} \\ 
+			\quad \quad $\hashblue$ check = $\appblue.\transitionblue$(asserter, \_oldstate, input, cmd); \comment{// Compute} \\ 
 			\quad \quad $\ifs$($\hstateplus$ != checkh) \{ \comment{// Send all coins and bond to non-cheater.}  \} \\
 			\quad \}
 		\end{tabular}
@@ -510,6 +511,7 @@ Future work should consider whether the execution of an application can be deleg
 	   		\quad $\oninput$ onlyParties() $\returns(\bool)$; \comment{// Check if tx signer is whitelisted} \\
 	   		\quad $\oninput$ refundAllBonds() $\internal$; \comment{// Refunds all bonds} \\
 	   		\quad $\oninput$ checkCallerTurn() $\returns$($\bool$); \comment{Enforce turn based disputes} \\
+	   		\quad $\oninput$ progressTurn() $\returns$($\bool$); \comment{Update the turn counter} \\
 	   		\quad $\oninput$ verifySigs($\bytes$ hmsg, $\bytes[]$ sigs, $\addr[]$ signers) $\returns(\bool)$; \\
 	   		\}
 	   \end{tabular}

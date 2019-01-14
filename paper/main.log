@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 11:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.12.20)  14 JAN 2019 11:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1790,72 +1790,72 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 433.
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Overfull \hbox (0.81657pt too wide) in paragraph at lines 432--507
+Overfull \hbox (0.81657pt too wide) in paragraph at lines 432--508
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 432--507
+Underfull \hbox (badness 10000) in paragraph at lines 432--508
 
  []
 
 
-Overfull \hbox (5.58472pt too wide) in paragraph at lines 508--516
+Overfull \hbox (5.58472pt too wide) in paragraph at lines 509--518
 [][] 
  []
 
@@ -1863,22 +1863,22 @@ Overfull \hbox (5.58472pt too wide) in paragraph at lines 508--516
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [7]
-Overfull \vbox (75.66171pt too high) has occurred while \output is active []
+Overfull \vbox (97.66171pt too high) has occurred while \output is active []
 
 
 [8]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 520.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 520.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 522.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 522.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 520.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 520.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 522.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 522.
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D4CC4355979D8029F3532C1A261E7FFB;137.
  ) 
 Here is how much of TeX's memory you used:
  31380 strings out of 494847
  609472 string characters out of 6179079
- 759769 words of memory out of 5000000
+ 760769 words of memory out of 5000000
  34181 multiletter control sequences out of 15000+600000
  543339 words of font info for 70 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
@@ -1903,7 +1903,7 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist
 public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt9.pfb>
-Output written on main.pdf (8 pages, 259678 bytes).
+Output written on main.pdf (8 pages, 259714 bytes).
 PDF statistics:
  224 PDF objects out of 1000 (max. 8388607)
  178 compressed objects within 2 object streams

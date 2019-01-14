@@ -52,7 +52,6 @@ contract StateAssertionChannel {
         bond = _bond; 
     }
 
-    // TODO: balance
     // Both parties need to deposit coins. 
     // Equal value turns on channel. 
     function deposit() public payable onlyplayers {
@@ -110,7 +109,6 @@ contract StateAssertionChannel {
     }
 
     // Party in the channel can assert a new state. 
-    // TODO: tidy up the _args
     function assertState(bytes32 _hstate, 
             bytes32 _assertedState, 
             bytes memory _input,  
@@ -124,7 +122,6 @@ contract StateAssertionChannel {
             bytes32 currentAssertedState
 
             ) onlyplayers payable public {
-        // 1000
         require(status == Status.DISPUTE);
         require((turnParity && (msg.sender == plist[0])) || (!turnParity && (msg.sender == plist[1])));
         
@@ -153,36 +150,23 @@ contract StateAssertionChannel {
             playerIndex = 1;
         }
         
-        // 1000
         require((msg.value == bond && !bondValue)
             || (msg.value == 0 && bondValue));
 
-        
-        // 5000
         if(msg.value != 0) { 
             if(playerIndex == 0) bondParty1 = true; 
             else if(playerIndex == 1) bondParty2 = true;
         }
 
         // update channel info
-        // 6000
         channelHash = keccak256(abi.encodePacked(_hstate, keccak256(abi.encodePacked(msg.sender, keccak256(abi.encodePacked(_input)), _command, _assertedState))));
 
         // New deadline 
-        // 5000
         deadline = block.number + disputePeriod;
-        // 5000
         turnParity = !turnParity; // Cannot assert two states in a row. 
-        
-        
+
         emit EventAssert(msg.sender, _hstate, _assertedState, _command, _input);
     }
-
-    // TODO: hstate is not set correctly in assertstate
-    // TODO: update turn taker in assertstate
-    // TODO: asserter != msg.sender (should checkCallerTurn()) 
-    // TODO: checkh in challengeAssertion
-
      
     // Send old state, and the index for submitted command. 
     // This is not PISA friendly. Ideally PISA will have a signed message from the honest party with PISA's address in it.
