@@ -1,0 +1,272 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 23
+TITLE: Two-Party State Channels with State Assertions
+AUTHORS: Chris Buckland and Patrick McCorry
+
+Overall evaluation: 1 (weak accept)
+Reviewer's confidence: 3 ((medium))
+
+----------- Overall evaluation -----------
+The paper describes an implementation of a scalable distributed computation by relegating computation to proposers and verifiers, who propose new state and verify its correctness by using an off-chain protocol. The paper is hard to read and understand its correctness, but seems plausible based on their empirical case-study (a battleship game). Most of the paper involves code for an example contract (figure 1) and its detailed explanation. With a bit of rewriting and some game-theoretic analysis, the paper could be turned into something understandable and potentially influential in suggesting new paradigms. As it is, it seems rather weak.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 23
+TITLE: Two-Party State Channels with State Assertions
+AUTHORS: Chris Buckland and Patrick McCorry
+
+Overall evaluation: 2 (accept)
+Reviewer's confidence: 4 ((high))
+
+----------- Overall evaluation -----------
+The article present a protocol
+that can help resolve disputes
+that might emerge between two
+parties trading off--blockchain.
+The protocol relies on a smart
+contract running on--blockchain
+that operates as a trusted party
+that is called by a party that
+feels offended by its counterpart
+actions.
+The protocol operates in a lock-step
+execution model.
+
+
+Strengths of the paper:
+======================
+1) It discusses a topic that directly relevant to
+   the WTSC'19.
+
+2) The paper is well-written and supported
+by a proof of concept implementation work.
+Implementation is very briefly discussed in
+section 4  which covers Future work--this
+suggests that the implementaion is at a
+very early stage--fine with me for a
+a short workshop paper.
+
+Weaknesses of the paper:
+========================
+The following observations might help
+to improve the paper:
+
+The paper suffer from some inaccuracies:
+p1: "Cryptocurrencies do not scale." I would change it
+to "Blockchain-based cryptocurrencies do not scale",
+and keep in mind that cryptocurrencies predate
+blockchains:
+a) https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fgroups.csail.mit.edu%2Fmac%2Fclasses%2F6.805%2Farticles%2Fmoney%2Fnsamint%2Fnsamint.htm&amp;data=01%7C01%7Cpatrick.mccorry%40kcl.ac.uk%7C2e926dac83c14d3a122608d6864003af%7C8370cf1416f34c16b83c724071654356%7C0&amp;sdata=CppST4UO5BrHCkyGKvMfG9AjKfAzfMQFjYevPWwDK4k%3D&amp;reserved=0
+b) See b-money link at https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.weidai.com&amp;data=01%7C01%7Cpatrick.mccorry%40kcl.ac.uk%7C2e926dac83c14d3a122608d6864003af%7C8370cf1416f34c16b83c724071654356%7C0&amp;sdata=EE%2BuRFs9%2BLFb4ux1sLTeTDkv4Ttz2Lnkee5nCii9tEo%3D&amp;reserved=0
+c) Money in electronic commerce: digital cash,
+         electronic fund transfers, and Ecash, Patiwat Panurach
+   Communications of the ACM, v39, n6, jun 1996.
+
+
+p2: trades the cost of computation with time: I would say, FOR
+"I'll trade you some of my chocolate for some of your ice cream."
+p2: one party submits the application’s state: I would include
+    the direct object (to whom is the application state
+    submitted). In my view, the old tradition of omitting
+    indirect objects and nouns in English sentences does
+    not help in technical writing.
+    It produces vague sentences that leave the
+    reader guessing the missing pieces.
+
+    I'd consider my comment to improve the first para of
+    Section 2 and 3.1.
+
+    Also the authors might like to explain where
+    is the smart contract and the dispute process running;
+    describe the scenario (how many parties are there,
+    , a Fig might help.
+    To save space, the authors might like to delete the five
+    lines between 3 and 3.1: that summary about what is
+    comming is useful in large documents (say a chapter
+    of 40 pages), but not strictly necessary in a 6page
+    doc.
+
+
+p2: then the bond is used: I'd say "a bond", rather than
+    "the bond".
+
+p3: "an honest party can always continue an application’s execution by"
+    Does the parties have and run a replica of the AC?
+    I wouldn't be asking this question if the scenario
+    was included in 3.1.
+
+p3: We assume it is a turn-based: I would change that to
+    We assume that the parties execute
+    a turn-based application ....
+p3: application and each party: change "and" to "where".
+    I would mention one or two examples of a turm--based application.
+
+p4: contract is stateless and the state must be supplied: change
+    "and" to "consequently".
+
+p4: If out-of-gas exceptions were permitted by an application,
+    then it can be leveraged to prevent an honest user challenging..:
+    re-write the sentence, the Eng is broken
+    ( it can be lev...)
+
+
+p5: Triggering dispute:
+"In general, a dispute must be triggered if the counterparty
+stops honestly following the protocol (i.e. aborts and stops
+responding)":  In my view, in practice disputes emerge
+from several situations. Examples  1)party A considers
+that he sent a payment within the deadline period whereas
+party B receives that payment after the expiry of the
+deadline (say, 'cos of a network delay or clock
+de-synchronization, clock skew); 2) a party A tries
+to progress to stateP when party B expects
+progress to stateQ; 3) party A  tries to evercharge
+party B, 4) party A (the deliver) delivers the item
+to the wrong address and tries to progress to
+the next state whereas party B (the purchaser) is still i
+waiting for the item, and so on.
+
+I wonder, can the authors explain how they map all
+these and other situations into "abort" and
+"stop responding"? It seems to be that it is possible, but
+it would be good if they could elaborate on that.
+
+Also, can they explain how a party can dintinguish
+"abort" from "not responding" when for example
+A is waiting from a message from B and the message does
+not arrive. I wonder, isn't "not responding" enough?
+why do they need "abort" as well?
+
+p6: opportunities: I'd say, alternatives
+p6: The second requires one party to submit hstatei via
+    SC.assertState() and for the honest party to continue the
+    application’s execution by asserting the next hstatei+1
+    via SC.assertState().
+    ...: To make the sentence readable, I would say, the
+    "offending party", the "honest party", "the initiating
+    party", "the responding party":, rather than
+    "first party", "second party".
+
+p6: Motivation for turn-based commands
+The explanation makes sense, yet, I wonder about the
+scope of this model, what applications can it cover?
+There is a large class of applications that can be
+implemented as lock-step progress (which is very
+simple and useful) applications, but I guess, not all
+of them.
+
+p7: benefits the attacker: Can the authors explain
+    who the attacker is?
+
+p7: relies a watching: change that to "relies on a watching ..."
+
+p7: Extending to N-parties: I'd clarify in the Introduction
+that the protocol discusssed in this paper is a two-party
+protocol. Yes, it is in the title, but it it would be good
+to clarify it in the Intro rather than in the last page. I'd
+just cut and past some of the lines from this paragraph
+to the Intro.
+
+
+p7: The paper could be enhanced with a paragraph (in the
+absence of a explicit Related Work section) explaining the main
+difference between the discussed protocol and PISA.
+What is the main difference: the turn-based model, with room
+for raising dispute concerns immediately after the 
+execution of each step? The absence of a watching service?
+A clarification of these question would add to the paper--I think.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 23
+TITLE: Two-Party State Channels with State Assertions
+AUTHORS: Chris Buckland and Patrick McCorry
+
+Overall evaluation: -1 (weak reject)
+Reviewer's confidence: 2 ((low))
+
+----------- Overall evaluation -----------
+his paper describes an approach to reducing the burden of smart
+contract execution on cryptocurrency networks such as Ethereum which
+could help to mitigate current scalability problems in Ethereum if
+other smart contract writers adopted their approach.
+
+The approach described is based on the technique of state channels
+where computation is modelled as a state transition system and
+participants post consecutive copies of the state on to the chain but
+computation is carried out off-chain. The paper proposes to improve in
+existing schemes by posting hashes of the state onto the chain instead
+of the full state. Thus reducing gas cost.
+
+Issues with the presentation:
+
+The paper describes an ethereum smart contract that is included in an
+appendix/figure and also linked in a footnote, although these two
+versions don't really match.
+
+The paper is a bit rough and various things have been omitted due to
+lack of space, I wonder whey the author didn't write a full paper
+instead of a short one.
+
+I found the paper hard to read and it makes various puzzling over
+general or over specific claims or even both a the same
+time. E.g. giving cost savings in dollars in the abstract without
+mentioning which platform is used. Later in section 2 it is revealed
+that we are talking about Ethereum.
+
+There are a lot of typos and some garbled sentences and the paper
+would benefit from careful proof reading.
+
+The version of the contract in the paper is quite different to the
+version linked in pastebin. It wasn't clear to me what the
+connection. I wondered if the design of the version linked to online
+has evolved since submission. But, this makes it hard to understand
+the paper as the version in the paper is incomplete.
+
+Another jarring problem with the narrative is that the program appears
+in an appendix but the code is described in detail throughout the
+technical sections of the paper. I think it would be better if the
+code was presented inline and explained nearby one fragment at a time.
+
+Issues with the content:
+
+It is a nice feature that the author clearly marks out what the
+assumptions are, this is very helpful. However, one of the assumptions
+is that the computation doesn't raise exceptions or out-of-gas
+errors. Otherwise the scheme is not secure.
+
+The paper describes a approach to combining on chain and off chain
+code to achieve a solution but the off chain code is barely described
+and not shown.
+
+Results of an expirement are described but not in sufficient
+detail. Eg. The precise program used is not really mentioned.
+
+Conclusion:
+
+The content is interesting but the presentation would benefit from
+further work and I think the paper should not be accepted in its
+current form.
+
+Minor issues:
+abstract:
+
+talks about cryptocurrencies in general, but gives a specific costs in dollars.
+
+Intro.
+"Cryptocurrencies do not scale" over general
+"three approaches" really just 3?
+"computatonal"
+"miner's"
+
+"clostly"
+"progressed withing"
+"have to made"
+"complex progressions"
+
+"experimentally demonstrate" how?
+
+figure 1 is an appendix...
+it bares very little resemblence to the code linked in the footnote.
+
+"relies a watching service"
