@@ -206,7 +206,7 @@
 \newcommand{\ecrecover}{\textcolor{entry}{\bf ecrecover}}
 \begin{document}
 
-	\title{Two-Party State Channels with State Assertions } 
+	\title{Two-Party State Channels with Assertions } 
 	
 	\author{Chris Buckland and Patrick McCorry}
 	
@@ -224,16 +224,17 @@
 	An empirical case study to evaluate state channels as a scaling solution for cryptocurrencies demonstrated that providing an application's full state during the dispute process for a state channel is financially costly (i.e. \$0.24 to \$8.83 for a battleship game) which can hamper their real-world use. 
 	To overcome this issue, we present \emph{State Assertion Channels}, the first state channel to guarantee  an honest party is always refunded the cost if it becomes necessary to send an application's full state during the dispute process. 
 	Furthermore it ensures an honest party will pay an approximate fixed cost to continue an application's execution via the dispute process. 
-	We provide a proof of concept implementation which demonstrates it costs approximately \$0.02 to submit evidence  regardless of the smart contract's application. 
+	We provide a proof of concept implementation in Ethereum which demonstrates it costs approximately \$0.02 to submit evidence  regardless of the smart contract's application. 
 
 	\end{abstract} 
 
 \section{Introduction}
 
-Cryptocurrencies do not scale.
-The community is pursing three approaches to alleviate the scalability issue. These are: new blockchain protocols \cite{bano2017consensus}, sharding transactions into distinct processing areas and off-chain protocols. 
-While the first two approaches can strictly increase the network's throughput, they harm the network's public verifiability as they reduce the diversity of peers with the computatonal, bandwidth or storage requirements to validate all transactions on the network and ultimately hold the miner's accountable. 
+Blockchain-based cryptocurrencies do not scale.
+The community is pursing three approaches to alleviate the scalability issue. These are: new blockchain protocols \cite{bano2017consensus,sompolinsky2016spectre,eyal2016bitcoin}, sharding transactions into distinct processing areas \cite{al2017chainspace,kokoris2018omniledger,luu2016secure} and off-chain protocols \cite{battleship,counterfactual,celernetwork,decker2015fast,poon2016bitcoin,poon2017plasma,khalil2018nocust}. 
+While the first two approaches can strictly increase the network's throughput, they harm the network's public verifiability as they reduce the diversity of peers with the computational, bandwidth or storage requirements to validate all transactions on the network and ultimately hold the miners accountable. \cite{gervais2016security,croman2016scaling} 
 This paper focuses on the off-chain (or so-called Layer 2) approach that simply aims to reduce the network's load.
+
 One promiment off-chain approach are state channels that lets a group of parties process transactions (and execute a smart contract) locally amongst themselves instead of on the global network. 
 In the best case, the application is no longer restricted by the underlying blockchain's latency and all execution is free as it remains local between the parties. 
 If there is a disagreement about the latest state of the smart contact, then any party can trigger a dispute and rely on the underlying blockchain to arbitrate the dispute's outcome.
@@ -241,12 +242,17 @@ To arbitrate, the blockchain provides a fixed time period to collect evidence fr
 So far, there are two types of dispute processes for a state channel. 
 The first is called \emph{closure dispute} \cite{statechannelnetworks,battleship,celernetwork} as the dispute process is responsible for closing the channel, re-deploying the smart contract with the new state and letting parties continue its execution via the blockchain. 
 The second is called \emph{command-issuance dispute} \cite{miller2017sprites,mccorry2018pisa,counterfactual,magmo} as the dispute process collects commands from each party and then executes the command to compute the new state. 
+
 A recent case study empirically evaluated state channels as a scaling solution by building the  two player game battleship \cite{battleship}.
-They highlighted the most expensive aspect of any dispute process is sending the application's full state. 
+It highlights that sending the application's full state during the dispute process can be financially expensive which may deter real-world use of state channels. 
 For example, the  case study claimed that sending the full game state approximately costs \$0.24 when the blockchain is not congested, but it can potentially sky-rocket to \$8.83 if the blockchain is congested. 
-The above can clearly hamper real-world use of state channels as an honest party will not use the dispute process if it is too clostly (and thus they cannot self-enforce the application's correct execution). 
-The case study also highlighted that as the application cannot be progressed withing the channel then, for liveness to be preserved, they would have to made on-chain. This could be expensive if the application required computationally complex progressions or if the number of transactions was high.
-We propose, \emph{State Assertion Channels}, which has a command-issuance dispute process\footnote{The assertion concept isn't compatible with closure channels as the full state is required to re-deploy an application.}.  and overcomes the issue of sending the application's full state by leveraging the concept of an optimistic contract.
+The above can clearly hamper real-world use of state channels as an honest party will not use the dispute process if it is too costly (and thus they cannot self-enforce the application's correct execution). 
+The case study also highlights the need to preserve liveness of an application.
+If one party is no longer co-operating off-chain, then a state channel should ensure the application's progress can continue via the blockchain.
+Again, this can be costly if progressing the application is computationally expensive or if it requires a significant number of transactions. 
+
+To alleivate the above issues, we propose \emph{State Assertion Channels}.
+It builds upon state channels with command-issuance disputes and relies on the concept of an optimistic Combined, honest parties can always assert the hash of a new state (and thus progress an application's execution) without the blockchain computing the state transition directly.
 Our contributions: 
 
 \begin{itemize}
@@ -260,13 +266,13 @@ Our contributions:
 \paragraph{Optimistic Smart Contracts } 
 
 
-An optimistic smart contract trades the cost of computation with time.
+An optimistic smart contract trades the cost of computation for time.
 This lets a smart contract accept an application's new state if no one has proved it is invalid within a fixed challenge period. 
-Briefly, one party submits the application's $\stateinfoi$, a command $\cmd$, its $\inputs$, the next $\stateinfoplus$ and a financial bond. 
+Briefly, one party submits to the optimistic smart contract the application's $\stateinfoi$, a command $\cmd$, its $\inputs$, the next $\stateinfoplus$ and a financial bond. 
 This asserts that $\stateinfoplus$ is the next state if the smart contract were to compute  $\stateinfoplus = \texttt{Transition}(\stateinfoi, \cmd, \inputs)$. 
 Other interested parties can compute the transition locally to verify its validity.
 If the asserted state is invalid, then anyone can issue a challenge by notifying the smart contract to compute the transition.
-If the challenge is successful, then the bond is used to refund the challenger. 
+If the challenge is successful, then a bond is used to refund the challenger. 
 Eigenmann, Moore and Johnson provided the first demo implementation of an optimistic contract for the Ethereum Name Service
 \cite{optimisticcontracts}, but so far this technique has alluded real-world use. 
 
@@ -279,40 +285,45 @@ Whereas in Counterfactual and Magmo, the command is executed when it is submited
 The dispute process can be cancelled if one party submits a later state agreed by all parties, or after the expiry time. 
 
 \section{State Assertion Channels}
-We provide a high level overview of a state assertion channel to show how it combines optimistic contracts and command issuance channels.
-Afterwards we'll provide a list of assumptions for the application contract $\appblue$ to ensure new assertions can always be challenged. 
-Finally we'll present the state assertion channel contract $\chanblue$ and the interaction amongst both parties, $\chanblue$ and $\appblue$. 
+%We provide a high level overview of a state assertion channel to show how it combines optimistic contracts and command issuance channels.
+%Afterwards we'll provide a list of assumptions for the application contract $\appblue$ to ensure new assertions can always be challenged. 
+%Finally we'll present the state assertion channel contract $\chanblue$ and the interaction amongst both parties, $\chanblue$ and $\appblue$. 
 
-\subsection{High level overview} 
+%\subsection{High level overview} 
 
 The state assertion contract $\chanblue$ and the application contract $\appblue$ must be deployed on the blockchain.
-Each party must lock coins into the state channel before they can begin co-operatively executing the application off-chain amongst themselves. 
+Each party must lock coins into the state assertion contract before the state channel is activated.
+Both parties can co-operatively execute the application off-chain amongst themselves by executing every state transition for $\appblue$ locally and exchanging signatures for every new state. 
 If there is a disagreement off-chain, then both parties can continue its progression via the dispute process.
+
 Our contribution involves changing the dispute process to avoid sending the full application's state, and to avoid computing the next states on-chain.
 Instead parties will assert an application's new state by submitting a hash of the previous state $\hstatei$, the command $\cmd$, its $\inputs$, a hash of the next state $\hstateplus$ and a financial \texttt{bond}. 
 %This asserts that $\hstateplus$ represents the application's new state if the command (and its input) was executed by $\appblue$. 
 The dispute process provides a fixed time period for the counterparty to verify the assertion by computing the state transition locally. 
 To challenge an assertion, the party submits the previous $\stateinfominus$ which lets $\chanblue$ verify the assertion was indeed correct by executing the transition via $\appblue$.  
 If the honest party successfully challenges an assertion and proves it is invalid, then they are sent the \texttt{bond} as a refund.
-Thus an honest party can always continue an application's execution by asserting a hash of the next state, and they are always refunded the cost of challenging an invalid assertion. 
+
+Thus an honest party can always continue an application's execution via the blockchain's dispute process by asserting a hash of the next state.
+As well, they are always refunded the cost of sending the application's full state in order to challenge an invalid state assertion. 
 
 \subsection{Application Contract Assumptions} \label{sec:assumptions} 
 
 \paragraph{Turn-based application} 
-We assume it is a turn-based application and each party performs their state transition in turn until a terminal state is reached.
+We assume that the parties execute a turn-based application where each party performs their state transition in turn until a terminal state is reached.
 As well, $\appblue$ must be instantiated on the blockchain to ensure its address is provided to the  state assertion contract $\chanblue$. 
 
 \paragraph{Single transition function} 
 The application contract implements a transition function which accepts the full state, a command and a list of inputs.
 The application contract is responsible for computing a state transition and returning a hash of the new state via 
 $	\hstateplus := \texttt{Transition}(\stateinfoi, \cmd, \inputs); $.
-The application contract is stateless and the state must be supplied to compute a state transition. 
+The application contract is stateless consequently the state must be supplied to compute a state transition. 
 
 \paragraph{No exceptions or out-of-gas errors} 
-The application's transition function must return a hash of the state $\hstate$.
-If the command doesn't exist or its execution simply fails, then it should return $\hstate = 0$. 
-This ensures $\chanblue$ can always verify a state assertion's validity.
-If out-of-gas exceptions were permitted by an application, then it can be leveraged to prevent an honest user challenging it (i.e. $\chanblue.\chanchallenge()$'s execution will never complete). 
+ In Ethereum, an entire transaction's execution can be reverted if a smart contract throws an exception (i.e. out of gas). 
+If the application $\appblue$ can throw an exception, then it can be used to revert the execution of an honest party's challenge. 
+Thus the application's transition function should not permit exceptions.
+We propose the transition function should return $\hstate$ and if the command doesn't exist or its execution simply fails, then it should return $\hstate = 0$. 
+This ensures an honest party can always issue a challenge via $\chanblue.\chanchallenge()$ as the state transition (and the verification) will always complete its execution.
 
 \subsection{Assertion Channel Overview} 
 Figure \ref{fig:fallback} presents the state channel assertion contract.
@@ -342,7 +353,8 @@ If this condition is satisified (and $\monotoniccounter+1$ is the largest counte
 $\sigma_{\participant_{2}} = \sign(\hstateplus, \monotoniccounter+1, \chanblue, \participant_{\texttt{turn}})$ and sends their signature $\sigma_{\participant_{1}}$ to the proposer. 
 
 \paragraph{Triggering a dispute} 
-In general, a dispute must be triggered if the counterparty stops honestly following the protocol (i.e. aborts and stops responding) and there are two cases to consider.
+In general, a dispute must be triggered if the counterparty stops responding in the state channel (i.e. they do not agree with the state update and they refuse to sign it). 
+There are two cases to consider. 
 Either the proposer is waiting on a signature from the verifier to authorise the new state, or the verifier is waiting on the proposer to propose a new state transition. 
 In both cases, each party waits for a local time-out before submiting the most recently $\hstatei$ via $\chanblue.\setstateblue()$ and triggering a dispute via $\chanblue.\triggerdispute()$. 
 The signed state hash includes $\participant_{\texttt{turn}}$ and thus $\chanblue$ waits for a new state assertion from the named party before $\texttt{deadline} = \texttt{now} + \Delta$.
@@ -374,16 +386,19 @@ When the terminal state hash is reached, the counterparty's only option is to su
 \section{Discussion and Future Work}
 
 \paragraph{Proof of concept implementation} 
-We developed a proof of concept for the Ethereum blockchain. Our smart contract is written in Solidity\footnote{https://pastebin.com/UBVvZ0FU}, and gas costs were measured using a private network. The assertions contract costs 2,943,664 gas to deploy, approximately \$0.97 using the gas price of 2.6 Gwei and the conversion rate of 1 ether = \$127 which was the real world rate in January 2019. The cost to make a state assertion is only 59,774+39.5n gas (\$0.02 at 2.6 Gwei and \$0.77 on a congested network at 96 Gwei) where \textit{n} corresponds to the number of bytes supplied as $\inputs$ to the assertion. Compared to the 725,508 gas (\$0.24 at 2.6 Gwei and \$8.83 at 96 Gwei) required to send the full battleship state.
+We developed a proof of concept for the Ethereum blockchain. Our smart contract is written in Solidity\footnote{Our PoC is an optimised for Solidity https://pastebin.com/UBVvZ0FU}, and gas costs were measured using a private network. The assertions contract costs 2,943,664 gas to deploy, approximately \$0.97 using the gas price of 2.6 Gwei and the conversion rate of 1 ether = \$127 which was the real world rate in January 2019. The cost to make a state assertion is only 59,774+39.5n gas (\$0.02 at 2.6 Gwei and \$0.77 on a congested network at 96 Gwei) where \textit{n} corresponds to the number of bytes supplied as $\inputs$ to the assertion. Compared to the 725,508 gas (\$0.24 at 2.6 Gwei and \$8.83 at 96 Gwei) required to send the full battleship state.
 
-\paragraph{Honest party can always verify a state transition} 
-%An honest party can only challenge a state assertion if they have a copy of the previous $\stateinfo$.
-There are only two opportunities for a new state hash to be accepted by $\chanblue$. 
+\paragraph{Honest party can always verify state assertions} 
+To issue a challenge or continue the application's execution, an honest party must have the $\stateinfoi$ which corresponding to the contract's accepted $\hstatei$.
+%An honest party can only challenge a state assertion if they have a copy of the previous $\stateinfo$.]
+There are only two situations when a new $\hstatei$ can be accepted by $\chanblue$.
+% in both situations the honest party will always have knowledge of $\stateinfoi$. 
 %Thus the honest party must have the previous state in plaintext as they must verify the state transition before accepting it.
-The first requires one party to submit the state hash via $\chanblue.\setstateblue()$ which requires both parties to have already signed it. 
-The second requires one party to submit $\hstatei$ via $\chanblue.\assertstate()$ and for the honest party to continue the application's execution by asserting the next $\hstateplus$ via $\chanblue.\assertstate()$. 
-The contract can accept $\hstatei$ as the first party asserted it was correct, and the second party continued execution instead of challenging $\hstatei$. 
-Thus an honest party will always have a copy of the previous $\stateinfo$ to verify state transitions and issue challenges. 
+In the first situation, $\hstatei$ will be accepted by $\chanblue$ if it is submitted using $\chanblue.\setstateblue()$, but this requires both parties to have already signed it (and thus acknowledge they know $\stateinfoi$).
+In the second situation, a new $\hstatei$ will be accepted by $\chanblue$ if the counterparty has asserted it using $\chanblue.\assertstate()$ and if the honest party continues the application's execution by asserting the next $\hstateplus$ via $\chanblue.\assertstate()$. 
+We highlight the contract accepts $\hstatei$ as the honest party has countinued its execution instead of challenging it. 
+As the above demonstrates, an honest party will always have a copy of $\stateinfoi$ if the corresponding $\hstatei$ is accepted by the contract.
+Thus they can always verify state transitions and issue challenges. 
 
 \paragraph{Motivation for turn-based commands} 
 There are two motivations for the turn-based channel. 
@@ -410,14 +425,17 @@ This terminates the application and sends all coins (including the bonds) to the
 
 \paragraph{Bond Requirement} 
 Each party must deposit a bond to cover the cost of a successful challenge to their assertion. 
-The bond's value must consider the worst-case when a transaction fee spikes due to network congestion. 
+A bond's value must consider the worst-case when a transaction fee spikes due to network congestion. 
 For example, in the battleship empirical case study it was highlighted that submitting the game's state can sky rocket from \$0.24 to approximately \$8.83 during network congestion.  
 If the security bond isn't sufficient to challenge a state assertion, then the counterparty may not challenge it. 
 
 \paragraph{Offline parties and PISA} 
 %There are two issues for a watching service like PISA \cite{mccorry2018pisa} to protect the channel. 
-If a party is offline (and thus unable to challenge), then the counterparty can trigger a dispute with the latest agreed hash and then assert an invalid state hash that benefits the attacker (i.e. send them all the coins).
-If a party relies a watching service, like PISA \cite{mccorry2018pisa}, then the watching service must have a copy of the latest state in plaintext to verify the invalid state transition and issue a challenge, but this hinders state privacy.
+If the honest party is offline, then the counterparty can trigger a dispute with the latest agreed hash and then assert an invalid state hash (i.e. sends the counterparty all the coins in the channel).
+If the offline party relies on a watching service, like PISA \cite{mccorry2018pisa}, then the watching service must have a copy of the latest state in plaintext to verify the invalid state transition and issue a challenge.
+This hinders state privacy as the watching service can view the channel's internal state. 
+As well, a watching service cannot perform a valid state transition on the offline party's behalf, so the offline party must ensure the only valid state transition for the counterparty is the application's terminal state. 
+
 %Second, an attacker can issue a new state assertion and claim all coins after the deadline using $\chanblue.\timeoutblue()$. 
 %To prevent a timeout, the offline party must delegate the authority to continue the application's execution to the watching service.
 %Future work should consider whether the execution of an application can\ be delegated to a third party in an accountable manner.
@@ -425,13 +443,15 @@ If a party relies a watching service, like PISA \cite{mccorry2018pisa}, then the
 \paragraph{Extending to N-parties}
 Future work should investigate how the state assertion paradigm could be extended to n-party state channels. Channels could progress in a round-robin fashion and store the last \textbf{n} state assertions. This is so that a party can be sure that a state assertion will not be accepted unless they explicitly apply their own state assertion after it.
 
+\section{Acknowledgements} Chris Buckland and Patrick McCorry are supported by an Ethereum Foundation
+scaling grant, Ethereum Community Fund grant and a Research Institute grant.
+
 \bibliographystyle{plain}
 \bibliography{bib}
 
 %\section{Conclusion}
 %
-%\paragraph{Acknowledgements} Chris Buckland and Patrick McCorry are supported by an Ethereum Foundation
-%scaling grant, Ethereum Community Fund grant and a Research Institute grant.
+
 
 \begin{figure}[H]
 	\begin{boxedminipage}{\columnwidth}
